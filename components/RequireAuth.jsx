@@ -1,7 +1,7 @@
 "use client"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import jwtDecode from "jwt-decode"
+import { jwtDecode } from "jwt-decode"
 
 export default function RequireAuth({ children }) {
   const router = useRouter()
@@ -27,6 +27,6 @@ export default function RequireAuth({ children }) {
     }
   }, [router])
 
-  if (loading) return <p className="p-8">Authenticating...</p>
+  // if (loading) return <p className="p-8">Authenticating...</p>
   return children
 }

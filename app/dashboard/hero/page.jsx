@@ -47,11 +47,8 @@ export default function HeroAdmin() {
             {form.image && <img src={form.image} className="w-24 h-24 object-cover" />}
             <ImageUploader
               onSuccess={(url) => setForm({ ...form, image: url })}
-            >
-              <span className="px-4 py-2 bg-gray-200 rounded cursor-pointer inline-block">
-                Upload
-              </span>
-            </ImageUploader>
+            />
+              
           </label>
 
           <label className="flex flex-col gap-2">

@@ -28,11 +28,15 @@ export default function DashboardLayout({ children }) {
           </Link>
         ))}
         <button
-          onClick={() => signOut(auth)}
-          className="mt-10 text-red-500 hover:underline"
-        >
-          Logout
-        </button>
+  onClick={() => {
+    localStorage.removeItem("token")
+    window.location.href = "/dashboard/login"
+  }}
+  className="mt-10 text-red-500 hover:underline"
+>
+  Logout
+</button>
+
       </aside>
       <main className="flex-1 p-8">{children}</main>
     </div>
