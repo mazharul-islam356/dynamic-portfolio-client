@@ -1,27 +1,27 @@
-'use client';
+"use client"
+import React, { useEffect, useState } from "react"
+import axios from "@/utils/axiosInstance"
 
-import { useEffect, useState } from 'react';
-
-export default function Skills() {
-  const [skills, setSkills] = useState([]);
+const Skills = () => {
+  const [skills, setSkills] = useState([])
 
   useEffect(() => {
-    fetch('http://localhost:4000/api/skills')
-      .then(res => res.json())
-      .then(data => setSkills(data));
-  }, []);
+    axios.get("/skills").then((res) => setSkills(res.data))
+  }, [])
 
   return (
-    <section className="py-16 text-black">
-      <h2 className="text-3xl font-semibold mb-6">Skills</h2>
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
-        {skills.map(skill => (
-          <div key={skill._id} className="flex flex-col items-center gap-2">
-            <img src={skill.iconUrl} alt={skill.name} className="w-12 h-12" />
-            <p>{skill.name}</p>
+    <div className="py-10 text-center">
+      <h2 className="text-2xl font-bold mb-6">My Skills</h2>
+      <div className="flex flex-wrap justify-center gap-6">
+        {skills.map((skill) => (
+          <div key={skill._id} className="text-center w-20">
+            <img src={skill.icon} className="w-12 h-12 mx-auto mb-2" />
+            <p className="text-sm">{skill.name}</p>
           </div>
         ))}
       </div>
-    </section>
-  );
+    </div>
+  )
 }
+
+export default Skills

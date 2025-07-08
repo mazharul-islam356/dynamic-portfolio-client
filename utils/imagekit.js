@@ -1,10 +1,18 @@
-// utils/imagekit.js
-import ImageKit from "imagekit";
+import { IKUpload } from "imagekitio-react"
 
-const imagekit = new ImageKit({
-  publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
-  privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
-  urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT,
-});
-
-module.exports = imagekit;
+export function ImageUploader({ onSuccess, folder = "portfolio", children }) {
+  return (
+    <IKUpload
+      fileName={`${Date.now()}.jpg`}
+      folder={folder}
+      useUniqueFileName
+      onSuccess={(res) => onSuccess(res.url)}
+      onError={(err) => console.error(err)}
+      publicKey={process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY}
+      urlEndpoint={process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT}
+      className="cursor-pointer"
+    >
+      {children}
+    </IKUpload>
+  )
+}
