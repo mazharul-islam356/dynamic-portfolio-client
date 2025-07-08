@@ -1,6 +1,7 @@
 "use client"
 import React, { useEffect, useState } from "react"
 import axios from "@/utils/axiosInstance"
+import userImg from '../public/user.jpg'
 
 const Hero = () => {
   const [hero, setHero] = useState(null)
@@ -13,7 +14,7 @@ const Hero = () => {
 
   return (
     <div className="text-center py-10">
-      <img src={hero.image} className="w-32 h-32 mx-auto rounded-full object-cover" />
+      <img src={hero?.image ? hero?.image : userImg} className="w-32 h-32 mx-auto rounded-full object-cover" />
       <h1 className="text-3xl font-bold mt-4">{hero.name}</h1>
       <p className="mt-2 text-gray-600">{hero.brief}</p>
       <a

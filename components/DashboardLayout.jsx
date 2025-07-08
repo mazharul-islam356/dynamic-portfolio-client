@@ -7,6 +7,7 @@ import  auth  from "@/utils/firebase"
 export default function DashboardLayout({ children }) {
   const pathname = usePathname()
   const nav = [
+    { href: "/", label: "Home" },
     { href: "/dashboard/hero", label: "Hero" },
     { href: "/dashboard/skills", label: "Skills" },
     { href: "/dashboard/projects", label: "Projects" },

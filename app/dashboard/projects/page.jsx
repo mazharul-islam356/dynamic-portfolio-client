@@ -50,19 +50,20 @@ export default function ProjectsAdmin() {
       <DashboardLayout>
         <h1 className="text-2xl font-bold mb-6">Projects</h1>
 
-        {/* Add / Edit form */}
-        <form onSubmit={addProject} className="grid gap-4 mb-10">
+        <form onSubmit={addProject} className="grid gap-4 mb-10 max-w-xl">
           <input
             placeholder="Title"
             className="border p-2 rounded"
             value={form.title}
             onChange={(e) => setForm({ ...form, title: e.target.value })}
+            required
           />
           <textarea
             placeholder="Description"
             className="border p-2 rounded"
             value={form.description}
             onChange={(e) => setForm({ ...form, description: e.target.value })}
+            required
           />
           <div className="flex gap-4">
             <input
@@ -88,10 +89,10 @@ export default function ProjectsAdmin() {
                 className="border p-1 w-20 rounded"
                 value={form.order}
                 onChange={(e) => setForm({ ...form, order: e.target.value })}
+                required
               />
             </label>
 
-            {/* Tech stack multi‑select */}
             <select
               multiple
               className="border p-2 rounded flex-1"
@@ -113,22 +114,19 @@ export default function ProjectsAdmin() {
 
           <div className="flex items-center gap-4">
             {form.image && (
-              <img src={form.image} className="w-24 h-24 object-cover" />
+              <img src={form.image} alt="Project" className="w-24 h-24 object-cover" />
             )}
             <ImageUploader
               folder="projects"
               onSuccess={(url) => setForm({ ...form, image: url })}
-            >
-              <span className="px-4 py-2 bg-gray-200 rounded cursor-pointer">
-                Upload Image
-              </span>
-            </ImageUploader>
+            />
           </div>
 
-          <button className="bg-blue-600 text-white py-2 rounded">Add</button>
+          <button type="submit" className="bg-blue-600 text-white py-2 rounded">
+            Add Project
+          </button>
         </form>
 
-        {/* Existing projects */}
         <div className="grid md:grid-cols-2 gap-6">
           {projects.map((p) => (
             <div key={p._id} className="border p-4 rounded relative">
@@ -138,24 +136,23 @@ export default function ProjectsAdmin() {
               >
                 ✕
               </button>
-              <img src={p.image} className="w-full h-40 object-cover rounded" />
+              {p.image && (
+                <img src={p.image} alt={p.title} className="w-full h-40 object-cover rounded" />
+              )}
               <h3 className="text-lg font-bold mt-2">{p.title}</h3>
               <p className="text-sm mb-2">{p.description}</p>
               <div className="flex flex-wrap gap-2 text-xs">
                 {p.stack?.map((t) => (
-                  <span
-                    key={t}
-                    className="bg-gray-200 px-2 py-1 rounded-full"
-                  >
+                  <span key={t} className="bg-gray-200 px-2 py-1 rounded-full">
                     {t}
                   </span>
                 ))}
               </div>
               <div className="mt-2 flex gap-4 text-sm">
-                <a href={p.github} className="underline">
+                <a href={p.github} target="_blank" rel="noreferrer" className="underline">
                   GitHub
                 </a>
-                <a href={p.live} className="underline">
+                <a href={p.live} target="_blank" rel="noreferrer" className="underline">
                   Live
                 </a>
               </div>
