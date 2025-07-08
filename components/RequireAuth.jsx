@@ -1,21 +1,32 @@
 "use client"
 import { useEffect, useState } from "react"
-import { onAuthStateChanged } from "firebase/auth"
 import { useRouter } from "next/navigation"
-import { auth } from "@/utils/firebase"
+import jwtDecode from "jwt-decode"
 
 export default function RequireAuth({ children }) {
-  const [loading, setLoading] = useState(true)
   const router = useRouter()
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (user) => {
-      if (!user) router.push("/dashboard/login")
-      else setLoading(false)
-    })
-    return () => unsub()
+    const token = localStorage.getItem("token")
+    if (!token) {
+      router.push("/dashboard/login")
+    } else {
+      try {
+        const decoded = jwtDecode(token)
+        if (decoded.exp * 1000 < Date.now()) {
+          localStorage.removeItem("token")
+          router.push("/dashboard/login")
+        } else {
+          setLoading(false)
+        }
+      } catch {
+        localStorage.removeItem("token")
+        router.push("/dashboard/login")
+      }
+    }
   }, [router])
 
-  if (loading) return <p className="p-8">Loading…</p>
+  if (loading) return <p className="p-8">Authenticating...</p>
   return children
 }

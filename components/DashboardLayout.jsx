@@ -2,7 +2,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { signOut } from "firebase/auth"
-import { auth } from "@/utils/firebase"
+import  auth  from "@/utils/firebase"
 
 export default function DashboardLayout({ children }) {
   const pathname = usePathname()
