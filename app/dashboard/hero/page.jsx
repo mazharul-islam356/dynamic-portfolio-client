@@ -4,6 +4,7 @@ import axios from "@/utils/axiosInstance"
 import DashboardLayout from "@/components/DashboardLayout"
 import RequireAuth from "@/components/RequireAuth"
 import { ImageUploader } from "@/utils/imagekit"
+import { toast } from "react-toastify"
 
 export default function HeroAdmin() {
   const [form, setForm] = useState({ name: "", brief: "", image: "", resume: "" })
@@ -24,10 +25,12 @@ export default function HeroAdmin() {
     setIsSaving(true)
     try {
       await axios.put("/hero", form)
-      setMsg("Changes saved successfully!")
+      toast.success("Changes saved successfully!")
+  
       setTimeout(() => setMsg(""), 3000)
     } catch (error) {
-      setMsg("Error saving changes. Please try again.")
+      toast.error("Error saving changes. Please try again.")
+      // setMsg("Error saving changes. Please try again.")
     } finally {
       setIsSaving(false)
     }
