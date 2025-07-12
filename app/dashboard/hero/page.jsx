@@ -1,9 +1,7 @@
 "use client"
 import { useEffect, useState } from "react"
 import axios from "@/utils/axiosInstance"
-import DashboardLayout from "@/components/DashboardLayout"
 import RequireAuth from "@/components/RequireAuth"
-import { ImageUploader } from "@/utils/imagekit"
 import { toast } from "react-toastify"
 
 export default function HeroAdmin() {
@@ -11,6 +9,7 @@ export default function HeroAdmin() {
   const [msg, setMsg] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
+  const [isDragOver, setIsDragOver] = useState(false)
 
   useEffect(() => {
     setIsLoading(true)
@@ -20,17 +19,62 @@ export default function HeroAdmin() {
       .finally(() => setIsLoading(false))
   }, [])
 
+  const handleImageUpload = async (file) => {
+    if (!file) return
+
+    const formData = new FormData()
+    formData.append("image", file)
+
+    try {
+      const res = await axios.post("/upload", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      })
+      const imageId = res.data.fileId
+      const imageUrl = `http://localhost:5000/api/images/${imageId}`
+      setForm((prev) => ({ ...prev, image: imageUrl }))
+      toast.success("Image uploaded successfully!")
+    } catch (err) {
+      console.error("Image upload failed:", err)
+      toast.error("Image upload failed")
+    }
+  }
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0]
+    if (file) handleImageUpload(file)
+  }
+
+  const handleDrop = (e) => {
+    e.preventDefault()
+    setIsDragOver(false)
+    const file = e.dataTransfer.files[0]
+    if (file && file.type.startsWith("image/")) {
+      handleImageUpload(file)
+    }
+  }
+
+  const handleDragOver = (e) => {
+    e.preventDefault()
+    setIsDragOver(true)
+  }
+
+  const handleDragLeave = (e) => {
+    e.preventDefault()
+    setIsDragOver(false)
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsSaving(true)
     try {
       await axios.put("/hero", form)
       toast.success("Changes saved successfully!")
-  
       setTimeout(() => setMsg(""), 3000)
     } catch (error) {
       toast.error("Error saving changes. Please try again.")
-      // setMsg("Error saving changes. Please try again.")
     } finally {
       setIsSaving(false)
     }
@@ -39,85 +83,130 @@ export default function HeroAdmin() {
   if (isLoading) {
     return (
       <RequireAuth>
-       
-          <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6">
-            <div className="max-w-4xl mx-auto">
-              <div className="bg-white rounded-2xl shadow-xl p-8">
-                <div className="animate-pulse">
-                  <div className="h-8 bg-slate-200 rounded-lg w-64 mb-8"></div>
-                  <div className="space-y-6">
-                    <div className="h-20 bg-slate-200 rounded-lg"></div>
-                    <div className="h-32 bg-slate-200 rounded-lg"></div>
-                    <div className="h-40 bg-slate-200 rounded-lg"></div>
+        <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-cyan-50">
+          <div className="container mx-auto px-4 py-8">
+            <div className="max-w-6xl mx-auto">
+              {/* Header Skeleton */}
+              <div className="mb-8">
+                <div className="h-10 bg-gradient-to-r from-slate-200 to-slate-300 rounded-2xl w-80 mb-3 animate-pulse"></div>
+                <div className="h-6 bg-slate-200 rounded-xl w-96 animate-pulse"></div>
+              </div>
+
+              {/* Main Card Skeleton */}
+              <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 overflow-hidden">
+                <div className="h-32 bg-gradient-to-r from-slate-200 to-slate-300 animate-pulse"></div>
+                <div className="p-8">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div className="space-y-6">
+                      {[1, 2, 3].map((i) => (
+                        <div key={i} className="space-y-3">
+                          <div className="h-5 bg-slate-200 rounded-lg w-24 animate-pulse"></div>
+                          <div className="h-14 bg-slate-100 rounded-2xl animate-pulse"></div>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="h-80 bg-slate-100 rounded-2xl animate-pulse"></div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-       
+        </div>
       </RequireAuth>
     )
   }
 
   return (
     <RequireAuth>
-     
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-          <div className="max-w-7xl mx-auto">
-           
+      <div className="min-h-screen ">
+        <div className="container mx-auto px-4 py-8">
+          <div>
+          
 
             {/* Main Form Card */}
-            <div className="bg-white rounded-lg overflow-hidden">
-              <div className="bg-gradient-to-r from-blue-600 to-cyan-600 p-6">
-                <h2 className="text-2xl font-semibold text-white">Edit Hero Content</h2>
-                <p className="text-blue-100 mt-1">Update your personal information and media</p>
+            <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 overflow-hidden mb-8">
+              {/* Card Header */}
+              <div className="relative bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-600 p-8">
+                <div className="absolute inset-0 bg-black/10"></div>
+                <div className="relative">
+                  <h2 className="text-3xl font-bold text-white mb-2">Edit Profile Information</h2>
+                  <p className="text-indigo-100">Update your details and media content</p>
+                </div>
+                {/* Decorative elements */}
+                <div className="absolute top-4 right-4 w-20 h-20 bg-white/10 rounded-full blur-xl"></div>
+                <div className="absolute bottom-4 right-12 w-16 h-16 bg-white/5 rounded-full blur-lg"></div>
               </div>
 
               <form onSubmit={handleSubmit} className="p-8">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  {/* Left Column */}
-                  <div className="space-y-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                  {/* Left Column - Form Fields */}
+                  <div className="space-y-8">
                     {/* Name Field */}
                     <div className="group">
-                      <label className="block text-sm font-semibold text-slate-700 mb-3">Full Name</label>
+                      <label className="block text-sm font-bold text-slate-700 mb-4 flex items-center gap-2">
+                        <div className="w-2 h-2 bg-indigo-500 rounded-full"></div>
+                        Full Name
+                      </label>
                       <div className="relative">
                         <input
                           type="text"
-                          className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 text-slate-800 placeholder-slate-400 bg-slate-50 focus:bg-white"
+                          className="w-full px-6 py-4 bg-slate-50/50 border-2 border-slate-200 rounded-2xl focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 focus:bg-white transition-all duration-300 text-slate-800 placeholder-slate-400 text-lg"
                           placeholder="Enter your full name"
                           value={form.name}
                           onChange={(e) => setForm({ ...form, name: e.target.value })}
                         />
-                        <div className="absolute inset-y-0 right-0 flex items-center pr-3">
-                          <div className="w-2 h-2 bg-blue-500 rounded-full opacity-0 group-focus-within:opacity-100 transition-opacity"></div>
+                        <div className="absolute inset-y-0 right-0 flex items-center pr-4">
+                          <div className="w-3 h-3 bg-indigo-500 rounded-full opacity-0 group-focus-within:opacity-100 transition-all duration-300 scale-0 group-focus-within:scale-100"></div>
                         </div>
                       </div>
                     </div>
 
                     {/* Brief Field */}
                     <div className="group">
-                      <label className="block text-sm font-semibold text-slate-700 mb-3">Brief Description</label>
-                      <textarea
-                        rows={4}
-                        className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 text-slate-800 placeholder-slate-400 bg-slate-50 focus:bg-white resize-none"
-                        placeholder="Write a brief description about yourself..."
-                        value={form.brief}
-                        onChange={(e) => setForm({ ...form, brief: e.target.value })}
-                      />
-                      <div className="flex justify-between items-center mt-2">
-                        <p className="text-xs text-slate-500">This will appear as your tagline</p>
-                        <span className="text-xs text-slate-400">{form.brief.length}/200</span>
+                      <label className="block text-sm font-bold text-slate-700 mb-4 flex items-center gap-2">
+                        <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                        Professional Brief
+                      </label>
+                      <div className="relative">
+                        <textarea
+                          rows={5}
+                          className="w-full px-6 py-4 bg-slate-50/50 border-2 border-slate-200 rounded-2xl focus:border-purple-500 focus:ring-4 focus:ring-purple-100 focus:bg-white transition-all duration-300 text-slate-800 placeholder-slate-400 resize-none text-lg"
+                          placeholder="Write a compelling description about yourself and your expertise..."
+                          value={form.brief}
+                          onChange={(e) => setForm({ ...form, brief: e.target.value })}
+                          maxLength={200}
+                        />
+                        <div className="absolute bottom-4 right-4 flex items-center gap-3">
+                          <span
+                            className={`text-sm font-medium ${form.brief.length > 180 ? "text-red-500" : "text-slate-400"}`}
+                          >
+                            {form.brief.length}/200
+                          </span>
+                        </div>
                       </div>
+                      <p className="text-sm text-slate-500 mt-3 flex items-center gap-2">
+                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                          <path
+                            fillRule="evenodd"
+                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                        This will be your main tagline and introduction
+                      </p>
                     </div>
 
                     {/* Resume Field */}
                     <div className="group">
-                      <label className="block text-sm font-semibold text-slate-700 mb-3">Resume Link</label>
+                      <label className="block text-sm font-bold text-slate-700 mb-4 flex items-center gap-2">
+                        <div className="w-2 h-2 bg-cyan-500 rounded-full"></div>
+                        Resume Link
+                      </label>
                       <div className="relative">
                         <input
                           type="text"
-                          placeholder="/resume.pdf or https://..."
-                          className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 text-slate-800 placeholder-slate-400 bg-slate-50 focus:bg-white"
+                          placeholder="https://yoursite.com/resume.pdf or /resume.pdf"
+                          className="w-full px-6 py-4 bg-slate-50/50 border-2 border-slate-200 rounded-2xl focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100 focus:bg-white transition-all duration-300 text-slate-800 placeholder-slate-400 text-lg pr-12"
                           value={form.resume}
                           onChange={(e) => setForm({ ...form, resume: e.target.value })}
                         />
@@ -126,7 +215,7 @@ export default function HeroAdmin() {
                             href={form.resume}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="absolute inset-y-0 right-0 flex items-center pr-3 text-blue-500 hover:text-blue-600"
+                            className="absolute inset-y-0 right-0 flex items-center pr-4 text-cyan-500 hover:text-cyan-600 transition-colors"
                           >
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path
@@ -139,20 +228,26 @@ export default function HeroAdmin() {
                           </a>
                         )}
                       </div>
-                      <div className="mt-2 p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                        <p className="text-xs text-amber-700 flex items-start gap-2">
-                          <svg className="w-4 h-4 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                            <path
-                              fillRule="evenodd"
-                              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
-                          <span>
-                            Upload your PDF to <code className="bg-amber-100 px-1 rounded">/public</code> folder or use
-                            an external storage URL
-                          </span>
-                        </p>
+                      <div className="mt-4 p-4 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl">
+                        <div className="flex items-start gap-3">
+                          <div className="w-5 h-5 text-amber-600 mt-0.5 flex-shrink-0">
+                            <svg fill="currentColor" viewBox="0 0 20 20">
+                              <path
+                                fillRule="evenodd"
+                                d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                                clipRule="evenodd"
+                              />
+                            </svg>
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-amber-800 mb-1">Resume Upload Tips</p>
+                            <p className="text-xs text-amber-700">
+                              Upload your PDF to the{" "}
+                              <code className="bg-amber-100 px-1.5 py-0.5 rounded font-mono">/public</code> folder or
+                              use a cloud storage URL (Google Drive, Dropbox, etc.)
+                            </p>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -160,78 +255,111 @@ export default function HeroAdmin() {
                   {/* Right Column - Image Upload */}
                   <div className="space-y-6">
                     <div className="group">
-                      <label className="block text-sm font-semibold text-slate-700 mb-3">Profile Image</label>
+                      <label className="block text-sm font-bold text-slate-700 mb-4 flex items-center gap-2">
+                        <div className="w-2 h-2 bg-rose-500 rounded-full"></div>
+                        Profile Image
+                      </label>
 
                       {/* Image Preview */}
-                      <div className="relative mb-4">
-                        {form.image ? (
-                          <div className="relative group/image">
+                      {form.image && (
+                        <div className="relative mb-6 group/preview">
+                          <div className="relative overflow-hidden rounded-3xl">
                             <img
                               src={form.image || "/placeholder.svg"}
                               alt="Profile preview"
-                              className="w-full h-64 object-cover rounded-xl border-4 border-slate-200 shadow-lg"
+                              className="w-full h-80 object-cover"
                             />
-                            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover/image:bg-opacity-30 transition-all duration-200 rounded-xl flex items-center justify-center">
-                              <button
-                                type="button"
-                                onClick={() => setForm({ ...form, image: "" })}
-                                className="opacity-0 group-hover/image:opacity-100 bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-all duration-200"
-                              >
-                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1-1H8a1 1 0 00-1 1v3M4 7h16"
-                                  />
-                                </svg>
-                              </button>
-                            </div>
-                          </div>
-                        ) : (
-                          <div className="w-full h-64 border-2 border-dashed border-slate-300 rounded-xl flex items-center justify-center bg-slate-50">
-                            <div className="text-center">
-                              <svg
-                                className="w-12 h-12 text-slate-400 mx-auto mb-3"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover/preview:opacity-100 transition-all duration-300"></div>
+                            <button
+                              type="button"
+                              onClick={() => setForm({ ...form, image: "" })}
+                              className="absolute top-4 right-4 bg-red-500 text-white p-3 rounded-full hover:bg-red-600 transition-all duration-200 opacity-0 group-hover/preview:opacity-100 transform scale-75 group-hover/preview:scale-100 shadow-lg"
+                            >
+                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path
                                   strokeLinecap="round"
                                   strokeLinejoin="round"
                                   strokeWidth={2}
-                                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1-1H8a1 1 0 00-1 1v3M4 7h16"
                                 />
                               </svg>
-                              <p className="text-slate-500 font-medium">No image selected</p>
-                              <p className="text-slate-400 text-sm">Upload an image to preview</p>
-                            </div>
+                            </button>
                           </div>
-                        )}
-                      </div>
+                        </div>
+                      )}
 
-                      {/* Image Uploader */}
-                      <div className="border-2 border-slate-200 rounded-xl p-6 bg-slate-50 hover:bg-slate-100 transition-colors">
-                        <ImageUploader onSuccess={(url) => setForm({ ...form, image: url })} />
+                      {/* Upload Area */}
+                      <div
+                        className={`relative border-2 border-dashed rounded-3xl p-8 transition-all duration-300 ${
+                          isDragOver
+                            ? "border-indigo-400 bg-indigo-50 scale-105"
+                            : form.image
+                              ? "border-slate-200 bg-slate-50"
+                              : "border-slate-300 bg-gradient-to-br from-slate-50 to-slate-100 hover:border-indigo-300 hover:bg-indigo-50"
+                        }`}
+                        onDrop={handleDrop}
+                        onDragOver={handleDragOver}
+                        onDragLeave={handleDragLeave}
+                      >
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleFileChange}
+                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                        />
+
+                        <div className="text-center">
+                          <div
+                            className={`w-16 h-16 mx-auto mb-4 rounded-2xl flex items-center justify-center transition-all duration-300 ${
+                              isDragOver ? "bg-indigo-500 text-white scale-110" : "bg-slate-200 text-slate-500"
+                            }`}
+                          >
+                            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                              />
+                            </svg>
+                          </div>
+                          <h3 className="text-lg font-bold text-slate-700 mb-2">
+                            {isDragOver ? "Drop your image here" : "Upload Profile Image"}
+                          </h3>
+                          <p className="text-slate-500 mb-4">Drag and drop or click to browse</p>
+                          <div className="flex items-center justify-center gap-4 text-sm text-slate-400">
+                            <span className="flex items-center gap-1">
+                              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                <path
+                                  fillRule="evenodd"
+                                  d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
+                                  clipRule="evenodd"
+                                />
+                              </svg>
+                              JPG, PNG
+                            </span>
+                            <span>•</span>
+                            <span>Max 5MB</span>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex items-center justify-between pt-8 mt-8 border-t border-slate-200">
-                  <div className="flex items-center gap-3">
+                <div className="flex items-center justify-between pt-8 mt-12 border-t border-slate-200">
+                  <div className="flex items-center gap-4">
                     {msg && (
                       <div
-                        className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
+                        className={`flex items-center gap-3 px-6 py-3 rounded-2xl font-medium transition-all duration-300 ${
                           msg.includes("Error")
-                            ? "bg-red-100 text-red-700 border border-red-200"
-                            : "bg-green-100 text-green-700 border border-green-200"
+                            ? "bg-red-100 text-red-700 border-2 border-red-200"
+                            : "bg-green-100 text-green-700 border-2 border-green-200"
                         }`}
                       >
                         {msg.includes("Error") ? (
-                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                             <path
                               fillRule="evenodd"
                               d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
@@ -239,7 +367,7 @@ export default function HeroAdmin() {
                             />
                           </svg>
                         ) : (
-                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                             <path
                               fillRule="evenodd"
                               d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
@@ -247,27 +375,27 @@ export default function HeroAdmin() {
                             />
                           </svg>
                         )}
-                        <span className="font-medium">{msg}</span>
+                        <span>{msg}</span>
                       </div>
                     )}
                   </div>
 
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-4">
                     <button
                       type="button"
-                      className="px-6 py-3 border-2 border-slate-300 text-slate-700 rounded-xl hover:bg-slate-50 hover:border-slate-400 transition-all duration-200 font-medium"
+                      className="px-8 py-4 border-2 border-slate-300 text-slate-700 rounded-2xl hover:bg-slate-50 hover:border-slate-400 transition-all duration-200 font-semibold"
                       onClick={() => window.location.reload()}
                     >
-                      Reset
+                      Reset Changes
                     </button>
                     <button
                       type="submit"
                       disabled={isSaving}
-                      className="px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:from-blue-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-semibold shadow-lg hover:shadow-xl flex items-center gap-2"
+                      className="px-10 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-2xl hover:from-indigo-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-bold shadow-xl hover:shadow-2xl hover:scale-105 flex items-center gap-3"
                     >
                       {isSaving ? (
                         <>
-                          <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                          <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
                             <circle
                               className="opacity-25"
                               cx="12"
@@ -282,11 +410,11 @@ export default function HeroAdmin() {
                               d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                             ></path>
                           </svg>
-                          Saving...
+                          Saving Changes...
                         </>
                       ) : (
                         <>
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                           </svg>
                           Save Changes
@@ -298,48 +426,73 @@ export default function HeroAdmin() {
               </form>
             </div>
 
-            {/* Preview Card */}
-            <div className="mt-8 bg-white rounded-2xl shadow-xl p-8">
-              <h3 className="text-2xl font-bold text-slate-800 mb-6">Live Preview</h3>
-              <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl p-8 text-white">
-                <div className="flex flex-col md:flex-row items-center gap-8">
-                  {form.image && (
-                    <img
-                      src={form.image || "/placeholder.svg"}
-                      alt="Profile"
-                      className="w-32 h-32 rounded-full object-cover border-4 border-white shadow-lg"
-                    />
-                  )}
-                  <div className="text-center md:text-left">
-                    <h1 className="text-4xl font-bold mb-2">{form.name || "Your Name"}</h1>
-                    <p className="text-xl text-slate-300 mb-4">
-                      {form.brief || "Your brief description will appear here"}
-                    </p>
-                    {form.resume && (
-                      <a
-                        href={form.resume}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 bg-white text-slate-800 px-6 py-3 rounded-lg font-semibold hover:bg-slate-100 transition-colors"
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+            {/* Live Preview Card */}
+            <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 overflow-hidden">
+              <div className="bg-gradient-to-r from-slate-800 to-slate-900 p-8">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                  <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                  <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                  <span className="text-slate-400 text-sm font-medium ml-4">Live Preview</span>
+                </div>
+
+                <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-900 rounded-2xl p-12 relative overflow-hidden">
+                  {/* Background decoration */}
+                  <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 rounded-full blur-3xl"></div>
+                  <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-cyan-500/20 to-blue-500/20 rounded-full blur-2xl"></div>
+
+                  <div className="relative flex flex-col md:flex-row items-center gap-12">
+                    {form.image && (
+                      <div className="relative">
+                        <div className="w-40 h-40 rounded-full overflow-hidden border-4 border-white/20 shadow-2xl">
+                          <img
+                            src={form.image || "/placeholder.svg"}
+                            alt="Profile"
+                            className="w-full h-full object-cover"
                           />
-                        </svg>
-                        Download Resume
-                      </a>
+                        </div>
+                        <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 rounded-full border-4 border-slate-900"></div>
+                      </div>
                     )}
+
+                    <div className="text-center md:text-left flex-1">
+                      <h1 className="text-5xl font-bold text-white mb-4 leading-tight">
+                        {form.name || <span className="text-slate-400">Your Name Here</span>}
+                      </h1>
+                      <p className="text-xl text-slate-300 mb-8 leading-relaxed max-w-2xl">
+                        {form.brief || (
+                          <span className="text-slate-500">
+                            Your professional brief and expertise description will appear here...
+                          </span>
+                        )}
+                      </p>
+
+                      {form.resume && (
+                        <a
+                          href={form.resume}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-3 bg-white text-slate-900 px-8 py-4 rounded-2xl font-bold hover:bg-slate-100 transition-all duration-200 shadow-xl hover:shadow-2xl hover:scale-105"
+                        >
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                            />
+                          </svg>
+                          Download Resume
+                        </a>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      
+      </div>
     </RequireAuth>
   )
 }

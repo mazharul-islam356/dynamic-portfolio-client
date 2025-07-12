@@ -17,7 +17,8 @@ const Projects = () => {
       <div className="grid md:grid-cols-2 gap-6 px-6">
         {projects.map((project) => (
           <div key={project._id} className="border p-4 rounded-lg">
-            <img src={project.image || noImg} className="w-full h-48 object-cover mb-4 rounded" />
+            <img src={`http://localhost:5000/api/images/${project.imageId}`} className="w-full h-40 object-cover rounded" />
+
             <h3 className="text-xl font-bold">{project.title}</h3>
             <p className="text-sm my-2">{project.description}</p>
             <div className="flex gap-4 mt-2 justify-center">

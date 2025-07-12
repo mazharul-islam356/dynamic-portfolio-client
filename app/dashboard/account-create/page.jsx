@@ -20,10 +20,7 @@ export default function RegisterPage() {
   const getPasswordStrength = (password) => {
     const requirements = [
       { regex: /.{8,}/, text: "At least 8 characters" },
-      { regex: /[A-Z]/, text: "One uppercase letter" },
-      { regex: /[a-z]/, text: "One lowercase letter" },
-      { regex: /\d/, text: "One number" },
-      { regex: /[^A-Za-z0-9]/, text: "One special character" },
+     
     ]
 
     return requirements.map((req) => ({

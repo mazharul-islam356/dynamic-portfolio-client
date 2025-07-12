@@ -4,8 +4,8 @@ import DashboardLayout from "@/components/DashboardLayout"
 
 export default function DashboardRootLayout({ children }) {
   return (
-    <RequireAuth>
+    // <RequireAuth>
       <DashboardLayout>{children}</DashboardLayout>
-    </RequireAuth>
+    // </RequireAuth>
   )
 }

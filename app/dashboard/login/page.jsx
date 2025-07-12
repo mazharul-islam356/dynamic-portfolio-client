@@ -128,7 +128,7 @@ export default function LoginPage() {
             <p className="text-center text-sm text-gray-600">
               {"Don't have an account?"}{" "}
               <Link
-                href="/dashboard/register"
+                href="/dashboard/account-create"
                 className="font-semibold text-blue-600 hover:text-blue-700 transition-colors duration-200"
               >
                 Create account
