@@ -1,13 +1,30 @@
 @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Borel&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bruno+Ace+SC&family=Cinzel:wght@400..900&family=Science+Gothic:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Dongle&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Audiowide&display=swap');
 @import "tailwindcss";
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
+  --font-poppins: "Poppins", sans-serif;
   --font-mono: var(--font-geist-mono);
+}
+
+/* fonts */
+
+.autowide{
+  font-family: "Audiowide", sans-serif;
+}
+
+.poppins{
+  font-family: var(--font-poppins);
+}
+.dm-serif{
+  font-family: "Dongle", sans-serif;
 }
 
 .hero-font{
@@ -17,6 +34,24 @@
 .hero-desc{
    font-family: "Montserrat Alternates", sans-serif;
 }
+
+.borel{
+  font-family: "Borel", cursive;
+}
+
+.cinzel{
+  font-family: "Cinzel", serif;
+}
+
+.bruno{
+  font-family: "Bruno Ace SC", sans-serif;
+}
+
+.science{
+  font-family: "Science Gothic", sans-serif;
+}
+
+
 
 body {
   background: var(--background);

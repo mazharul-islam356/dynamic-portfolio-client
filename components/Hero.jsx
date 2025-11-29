@@ -1,173 +1,215 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import axios from "@/utils/axiosInstance"
-import Link from "next/link"
-import { Menu, X, Download } from "lucide-react"
+import { useEffect, useRef } from "react";
+import * as THREE from "three";
+import Header from "./Header";
+import DarkVeil from "./FloatingLines";
+import GlassButtonDemo from "./GlassButton";
 
-export default function Hero() {
-  const [hero, setHero] = useState(null)
-  const [showNavbar, setShowNavbar] = useState(false)
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+export default function Home() {
+  const canvasRef = useRef(null);
 
   useEffect(() => {
-    const fetchHeroData = async () => {
-      try {
-        const res = await axios.get("/hero")
-        setHero(res.data)
-      } catch (error) {
-        console.error("Failed to fetch hero data:", error)
-        setHero({
-          image: "/user.png",
-          name: "Jane Doe",
-          brief: "Creative UI/UX Designer | Crafting intuitive and beautiful user experiences.",
-          resumeUrl: "/resume.pdf",
-        })
-      }
+    // Load images
+    const img1 = "/Screenshot 2025-11-29 132501.png";
+    const img2 = "/celtel.png";
+    const img3 = "/mks.png";
+    const img4 = "/gadcheap.png";
+    const img5 = "/applenewtn.png";
+    const img6 = "/maxcart.png";
+
+    const textureLoader = new THREE.TextureLoader();
+    let textures = [img1, img2, img3, img4, img5, img6, img1, img2, img3, img4, img5, img6,].map((url) =>
+      textureLoader.load(url)
+    );
+
+    const canvas = canvasRef.current;
+    const scene = new THREE.Scene();
+
+    // Geometry
+    const geometry = new THREE.PlaneGeometry(2.4, 1.6, 40, 1);
+
+    // Slider setup
+    const numVisible = 8;
+    const radius = 4.2;
+    const arcSpread = 1.4 * Math.PI;
+    const angleStep = arcSpread / (numVisible - 1);
+    const numMeshes = 30;
+    const centerIndex = Math.floor(numMeshes / 3);
+    const meshes = [];
+
+    // Create curved meshes
+    for (let i = 0; i < numMeshes; i++) {
+      const material = new THREE.ShaderMaterial({
+        uniforms: {
+          uTexture: { value: textures[i % 4] },
+          uRadius: { value: radius },
+        },
+        vertexShader: `
+          varying vec2 vUv;
+          uniform float uRadius;
+          void main() {
+            vUv = uv;
+            vec3 p = position;
+            float theta = p.x / uRadius;
+            float c = cos(theta);
+            float s = sin(theta);
+            vec3 curvedPosition = vec3(
+              uRadius * s,
+              p.y,
+              uRadius * (1.0 - c)
+            );
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(curvedPosition, 1.0);
+          }
+        `,
+        fragmentShader: `
+          varying vec2 vUv;
+          uniform sampler2D uTexture;
+          void main() {
+            gl_FragColor = texture2D(uTexture, vUv);
+          }
+        `,
+      });
+
+      const mesh = new THREE.Mesh(geometry, material);
+      scene.add(mesh);
+      meshes.push(mesh);
     }
-    fetchHeroData()
-  }, [])
 
-  useEffect(() => {
-    const handleScroll = () => setShowNavbar(window.scrollY > 100)
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
+    // Sizes
+    const sizes = {
+      width: window.innerWidth,
+      height: window.innerHeight,
+    };
 
-  if (!hero) return null
+    // Camera
+    const camera = new THREE.PerspectiveCamera(
+      70,
+      sizes.width / sizes.height,
+      0.01,
+      20
+    );
+    camera.position.z = 5.5;
+
+    // Renderer
+    const renderer = new THREE.WebGLRenderer({
+      antialias: true,
+      canvas,
+      alpha: true,
+    });
+    renderer.setClearColor(0x000000, 0);
+    renderer.setSize(sizes.width, sizes.height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    // Drag mechanics
+    const mouse = { prevX: 0, isDown: false };
+    let targetX = 0;
+    let currentX = 0;
+    let ease = 0.075;
+
+    const onDown = (x) => {
+      mouse.isDown = true;
+      mouse.prevX = x;
+    };
+
+    const onUp = () => {
+      mouse.isDown = false;
+    };
+
+    const onMove = (x) => {
+      if (!mouse.isDown) return;
+      const delta = x - mouse.prevX;
+      targetX += delta * 0.01;
+      mouse.prevX = x;
+    };
+
+    window.addEventListener("mousedown", (e) => onDown(e.clientX));
+    window.addEventListener("mouseup", onUp);
+    window.addEventListener("mousemove", (e) => onMove(e.clientX));
+
+    window.addEventListener("touchstart", (e) => onDown(e.touches[0].clientX));
+    window.addEventListener("touchend", onUp);
+    window.addEventListener("touchmove", (e) =>
+      onMove(e.touches[0].clientX)
+    );
+
+    // Resize
+    window.addEventListener("resize", () => {
+      sizes.width = window.innerWidth;
+      sizes.height = window.innerHeight;
+      camera.aspect = sizes.width / sizes.height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(sizes.width, sizes.height);
+    });
+
+    // Animation
+    const animate = () => {
+      requestAnimationFrame(animate);
+
+      // Auto-slide infinite
+      if (!mouse.isDown) {
+        targetX += 0.005;
+        if (targetX > numMeshes) targetX = 0;
+      }
+
+      currentX += (targetX - currentX) * ease;
+
+      // Arc positioning
+      for (let i = 0; i < meshes.length; i++) {
+        const mesh = meshes[i];
+        const offset = i - centerIndex + currentX;
+        const angle = offset * angleStep;
+
+        if (Math.abs(offset) > numVisible / 2) {
+          mesh.visible = false;
+          continue;
+        }
+
+        mesh.visible = true;
+
+        mesh.position.x = radius * Math.sin(angle);
+        mesh.position.z = radius * (1 - Math.cos(angle));
+        mesh.lookAt(camera.position.x, 0, camera.position.z);
+      }
+
+      renderer.render(scene, camera);
+    };
+
+    animate();
+  }, []);
 
   return (
-    <>
-      {/* Animated Navbar */}
-      <nav
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-in-out ${
-          showNavbar
-            ? "translate-y-0 opacity-100 backdrop-blur-md bg-black/50 border-b border-sky-500/20"
-            : "-translate-y-full opacity-0"
-        }`}
-      >
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="flex items-center justify-between h-16">
-            <div className="text-sky-400 font-bold text-xl">{hero.name.split(" ")[0]}</div>
+    <div className="w-full h-screen overflow-hidden relative">
 
-            {/* Desktop Menu */}
-            <div className="hidden md:flex items-center space-x-8 text-white">
-              {["about", "projects", "contact"].map((section) => (
-                <Link key={section} href={`#${section}`} className="hover:text-sky-400 transition-colors">
-                  {section.charAt(0).toUpperCase() + section.slice(1)}
-                </Link>
-              ))}
-              <Link
-                href="/dashboard/hero"
-                className="bg-gradient-to-r from-sky-500 to-cyan-500 text-white px-4 py-2 rounded-full hover:from-cyan-500 hover:to-sky-600 transition-all"
-              >
-                Hire Me
-              </Link>
-            </div>
+      {/* HEADER */}
+      <div className="absolute top-0 left-0 w-full z-30">
+        <Header />
+      </div>
 
-            {/* Mobile Menu Button */}
-            <button className="md:hidden text-sky-300" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-              {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
-          </div>
+      {/* STATIC TOP TEXT */}
+      <div className="absolute top-[120px] w-full text-center z-30">
+        <h2 className="borel text-white">Hello There —</h2>
+        <h2 className="text-white text-4xl font-bold tracking-wide bruno">
+          You’ve Entered a Creative Dimension
+        </h2>
+        <GlassButtonDemo></GlassButtonDemo>
+        {/* <p className="text-white text-base poppins text-center mt-3">Welcome to the portfolio of Mazharul Islam — enjoy the experience.</p> */}
+      </div>
 
-          {/* Mobile Menu */}
-          {mobileMenuOpen && (
-            <div className="md:hidden bg-black/90 backdrop-blur border-t border-sky-500/20">
-              <div className="px-3 py-4 space-y-2 text-white">
-                {["about", "projects", "contact"].map((section) => (
-                  <Link key={section} href={`#${section}`} className="block hover:text-sky-400">
-                    {section.charAt(0).toUpperCase() + section.slice(1)}
-                  </Link>
-                ))}
-                <Link
-                  href="/dashboard/hero"
-                  className="block bg-gradient-to-r from-sky-500 to-cyan-500 text-white text-center rounded-md py-2"
-                >
-                  Hire Me
-                </Link>
-              </div>
-            </div>
-          )}
-        </div>
-      </nav>
+      {/* BACKGROUND */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        <DarkVeil scanlineFrequency={1} scanlineIntensity={0.15} />
+      </div>
 
-      {/* Hero Section */}
-      <section className="relative w-full h-screen overflow-hidden bg-gradient-to-bl from-black via-[#0a1a2f] to-[#00111a]">
-        {/* Soft Gradient Overlays */}
-        <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-sky-600/10 to-cyan-400/10 animate-pulse" />
-          <div
-            className="absolute inset-0 bg-gradient-to-tl from-cyan-500/10 via-transparent to-sky-500/10 animate-pulse"
-            style={{ animationDelay: "1.2s" }}
-          />
-        </div>
+      {/* SLIDER CANVAS */}
+      <canvas ref={canvasRef} className="absolute top-5 inset-0 z-10 webgl" />
 
-        {/* Animated Particles */}
-        <div className="absolute inset-0 z-0">
-          {[...Array(60)].map((_, i) => (
-            <div
-              key={i}
-              className="absolute w-1 h-1 bg-cyan-400/20 rounded-full animate-pulse"
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 5}s`,
-                animationDuration: `${3 + Math.random() * 3}s`,
-              }}
-            />
-          ))}
-        </div>
-
-        {/* Geometric Shapes */}
-        <div className="absolute inset-0 overflow-hidden z-0">
-          <div
-            className="absolute w-24 h-24 border border-cyan-400/30 top-1/3 left-1/3 rotate-45 animate-spin-slow"
-          ></div>
-          <div
-            className="absolute w-16 h-16 border border-sky-400/20 bottom-1/4 right-1/4 animate-bounce"
-            style={{ animationDuration: "4s" }}
-          ></div>
-          <div className="absolute w-20 h-20 bg-cyan-400/10 rounded-full top-1/2 right-1/2 animate-pulse" />
-        </div>
-
-        {/* Content */}
-        <div className="relative z-10 flex items-center justify-center h-full text-center px-6">
-          <div className="space-y-7 max-w-4xl">
-            {/* Name */}
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-sky-200 to-cyan-300 hero-font">
-              {hero.name}
-             
-            </h1>
-
-            {/* Brief */}
-            <p className="text-lg md:text-2xl font-light text-sky-100 max-w-2xl mx-auto font-desc">
-              {hero.brief}
-            </p>
-
-            {/* Buttons */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-              <Link
-                href="/dashboard/hero"
-                className="px-10 py-4 rounded-full text-white font-medium bg-gradient-to-r from-cyan-500 to-sky-600 hover:from-cyan-400 hover:to-sky-500 transition-transform hover:scale-105 shadow-xl"
-              >
-                Hire Me
-              </Link>
-              <Link
-                href="/"
-                download
-                className="flex items-center gap-2 px-8 py-4 border border-cyan-300/50 text-cyan-200 rounded-full hover:bg-cyan-300/10 transition-all"
-              >
-                <Download className="w-5 h-5 group-hover:animate-bounce" />
-                Download CV
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        {/* Bottom Fade */}
-        <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-black via-black/80 to-transparent" />
-      </section>
-    </>
-  )
+      {/* STATIC BOTTOM TEXT */}
+      <div className="absolute bottom-[100px] w-full text-center z-30">
+        <h2 className="text-white text-3xl opacity-90 dm-serif">
+        Introducing myself — I am <span className="autowide text-lg">Mazharul Islam</span> <br /> Frontend Developer 
+        </h2>
+      </div>
+    </div>
+  );
 }
