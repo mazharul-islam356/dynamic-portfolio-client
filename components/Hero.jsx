@@ -202,10 +202,10 @@ export default function Home() {
       </div>
 
       {/* SLIDER CANVAS */}
-      <canvas ref={canvasRef} className="absolute top-5 inset-0 z-10 webgl" />
+      <canvas ref={canvasRef} className="absolute top-7 inset-0 z-10 webgl" />
 
       {/* STATIC BOTTOM TEXT */}
-      <div className="absolute bottom-[100px] w-full text-center z-30">
+      <div className="absolute md:bottom-[100px] bottom-10 w-full text-center z-30">
         <h2 className="text-white text-3xl opacity-90 dm-serif">
         Introducing myself — I am <span className="autowide text-lg">Mazharul Islam</span> <br /> Frontend Developer 
         </h2>
