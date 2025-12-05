@@ -32,7 +32,7 @@ export default function GlassButtonDemo() {
 
           {/* MAIN BUTTON */}
           <button
-            className="relative select-none px-10 py-2 rounded-full cursor-pointer backdrop-blur-sm bg-white/10 shadow-[inset_0_2px_4px_rgba(0,0,0,0.05),inset_0_-2px_4px_rgba(255,255,255,0.5),0_4px_2px_-2px_rgba(0,0,0,0.2)] transition-transform duration-300"
+            className="relative select-none md:px-10 px-7 py-1.5 md:py-2 rounded-full cursor-pointer backdrop-blur-sm bg-white/10 shadow-[inset_0_2px_4px_rgba(0,0,0,0.05),inset_0_-2px_4px_rgba(255,255,255,0.5),0_4px_2px_-2px_rgba(0,0,0,0.2)] transition-transform duration-300"
             style={{}}
           >
             {/* REFLECTION */}
@@ -42,7 +42,7 @@ export default function GlassButtonDemo() {
                 background: `linear-gradient(135deg, ${rgba()}, transparent)`
               }}
             />
-            <span className="relative font-medium text-gray-100 tracking-tight drop-shadow-sm poppins">
+            <span className="relative font-medium text-gray-100 tracking-tight md:text-base text-sm drop-shadow-sm poppins">
               Explore Now
             </span>
           </button>

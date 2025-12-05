@@ -335,7 +335,7 @@ export default function SkillsAdmin() {
                         {/* Delete Button */}
                         <button
                           onClick={() => setDeleteConfirm(skill._id)}
-                          className="w-full py-2 px-4 bg-red-50 text-red-600 rounded-xl hover:bg-red-100 hover:text-red-700 transition-all duration-200 font-medium text-sm border border-red-200 hover:border-red-300 opacity-0 group-hover:opacity-100"
+                          className="w-full py-2 px-4 bg-red-50 text-red-600 rounded-sm cursor-pointer hover:bg-red-100 hover:text-red-700 transition-all duration-200 font-medium text-sm border border-red-200 hover:border-red-300 opacity-0 group-hover:opacity-100"
                         >
                           Delete Skill
                         </button>
@@ -367,7 +367,7 @@ export default function SkillsAdmin() {
 
         {/* Delete Confirmation Modal */}
         {deleteConfirm && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden">
               <div className="bg-gradient-to-r from-red-500 to-red-600 px-6 py-4">
                 <h2 className="text-xl font-bold text-white">Confirm Deletion</h2>
@@ -394,13 +394,13 @@ export default function SkillsAdmin() {
                 <div className="flex space-x-3">
                   <button
                     onClick={() => setDeleteConfirm(null)}
-                    className="flex-1 px-4 py-3 border-2 border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 font-medium"
+                    className="flex-1 px-4 py-2 border-2 border-gray-200 text-gray-700 rounded-sm hover:bg-gray-50 cursor-pointer hover:border-gray-300 transition-all duration-200 font-medium"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={() => deleteSkill(deleteConfirm)}
-                    className="flex-1 px-4 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:from-red-600 hover:to-red-700 transition-all duration-200 font-semibold shadow-lg"
+                    className="flex-1 px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-sm hover:from-red-600 hover:to-red-700 transition-all duration-200 font-semibold shadow-lg cursor-pointer"
                   >
                     Delete
                   </button>

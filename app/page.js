@@ -1,8 +1,13 @@
-import Skills from "@/components/Skills"
+
 import Projects from "@/components/Projects"
 import Hero from "@/components/Hero"
 import MyService from "@/components/MyService"
 import { SeasonalHoverCards } from "@/src/components/lightswind/seasonal-hover-cards"
+import Skills from "@/components/Skills";
+import AboutMe from "@/components/AboutMe";
+import Contact from "@/components/Contact";
+
+
 const cardArray = [
   {
     title: "Summer Vibes",
@@ -33,14 +38,15 @@ export default function HomePage() {
   return (
     <main>
       <Hero />
+      <AboutMe></AboutMe>
       <Skills />
       {/* <Services /> */}
-      <MyService></MyService>
-      <SeasonalHoverCards cards={cardArray} />
+      {/* <MyService></MyService> */}
+      {/* <SeasonalHoverCards cards={cardArray} /> */}
 
       <Projects />
       {/* <WorkExperience /> */}
-      {/* <Contact /> */}
+      <Contact />
       {/* <Footer /> */}
     </main>
   )

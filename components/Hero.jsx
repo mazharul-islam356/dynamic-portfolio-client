@@ -10,39 +10,67 @@ export default function Home() {
   const canvasRef = useRef(null);
 
   useEffect(() => {
-    // Load images
-    const img1 = "/Screenshot 2025-11-29 132501.png";
-    const img2 = "/celtel.png";
-    const img3 = "/mks.png";
-    const img4 = "/gadcheap.png";
-    const img5 = "/applenewtn.png";
-    const img6 = "/maxcart.png";
+    // Image list
+    const imagePaths = [
+      "/Screenshot 2025-11-29 132501.png",
+      "/celtel.png",
+      "/mks.png",
+      "/gadcheap.png",
+      "/applenewtn.png",
+      "/maxcart.png",
+    ];
 
+    // Load textures
     const textureLoader = new THREE.TextureLoader();
-    let textures = [img1, img2, img3, img4, img5, img6, img1, img2, img3, img4, img5, img6,].map((url) =>
-      textureLoader.load(url)
-    );
+    const textures = imagePaths.map((url) => textureLoader.load(url));
 
     const canvas = canvasRef.current;
+
+    // Scene
     const scene = new THREE.Scene();
 
-    // Geometry
-    const geometry = new THREE.PlaneGeometry(2.4, 1.6, 40, 1);
+    // ============================
+    // ⭐ RESPONSIVE SETTINGS
+    // ============================
+    let numVisible;
+    let radius;
+    let arcSpread;
+    let planeWidth;
+    let planeHeight;
+    let centerScale;
 
-    // Slider setup
-    const numVisible = 8;
-    const radius = 4.2;
-    const arcSpread = 1.4 * Math.PI;
-    const angleStep = arcSpread / (numVisible - 1);
+    if (window.innerWidth < 768) {
+      // ⭐ MOBILE VERSION
+      numVisible = 5;
+      radius = 2.8;
+      arcSpread = 1.0 * Math.PI;
+      planeWidth = 1.9;
+      planeHeight = 1.05;
+      centerScale = 0.95; // ছোট center image
+    } else {
+      // ⭐ DESKTOP VERSION
+      numVisible = 8;
+      radius = 4.6;
+      arcSpread = 1.4 * Math.PI;
+      planeWidth = 2.5;
+      planeHeight = 1.55;
+      centerScale = 0.85; // ডেস্কটপেও একটু ছোট center
+    }
+
+    // Plane geometry
+    const geometry = new THREE.PlaneGeometry(planeWidth, planeHeight, 40, 1);
+
+    // Mesh count
     const numMeshes = 30;
-    const centerIndex = Math.floor(numMeshes / 3);
+    const centerIndex = Math.floor(numMeshes / 2);
+
     const meshes = [];
 
     // Create curved meshes
     for (let i = 0; i < numMeshes; i++) {
       const material = new THREE.ShaderMaterial({
         uniforms: {
-          uTexture: { value: textures[i % 4] },
+          uTexture: { value: textures[i % textures.length] },
           uRadius: { value: radius },
         },
         vertexShader: `
@@ -51,14 +79,18 @@ export default function Home() {
           void main() {
             vUv = uv;
             vec3 p = position;
+
             float theta = p.x / uRadius;
             float c = cos(theta);
             float s = sin(theta);
+
+            // Slight gap fix with multiplier
             vec3 curvedPosition = vec3(
-              uRadius * s,
+              (uRadius * s) * 0.985,
               p.y,
               uRadius * (1.0 - c)
             );
+
             gl_Position = projectionMatrix * modelViewMatrix * vec4(curvedPosition, 1.0);
           }
         `,
@@ -90,85 +122,99 @@ export default function Home() {
       20
     );
     camera.position.z = 5.5;
+    scene.add(camera);
 
     // Renderer
     const renderer = new THREE.WebGLRenderer({
-      antialias: true,
       canvas,
+      antialias: true,
       alpha: true,
     });
-    renderer.setClearColor(0x000000, 0);
     renderer.setSize(sizes.width, sizes.height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(2, window.devicePixelRatio));
+    renderer.setClearColor(0x000000, 0);
 
-    // Drag mechanics
-    const mouse = { prevX: 0, isDown: false };
+    // Drag Logic
+    let mouseDown = false;
+    let prevX = 0;
     let targetX = 0;
     let currentX = 0;
     let ease = 0.075;
 
-    const onDown = (x) => {
-      mouse.isDown = true;
-      mouse.prevX = x;
+    const onMouseDown = (e) => {
+      mouseDown = true;
+      prevX = e.clientX;
     };
 
-    const onUp = () => {
-      mouse.isDown = false;
+    const onMouseUp = () => (mouseDown = false);
+
+    const onMouseMove = (e) => {
+      if (!mouseDown) return;
+      targetX += (e.clientX - prevX) * 0.01;
+      prevX = e.clientX;
     };
 
-    const onMove = (x) => {
-      if (!mouse.isDown) return;
-      const delta = x - mouse.prevX;
-      targetX += delta * 0.01;
-      mouse.prevX = x;
+    window.addEventListener("mousedown", onMouseDown);
+    window.addEventListener("mouseup", onMouseUp);
+    window.addEventListener("mousemove", onMouseMove);
+
+    const onTouchStart = (e) => {
+      mouseDown = true;
+      prevX = e.touches[0].clientX;
+    };
+    const onTouchEnd = () => (mouseDown = false);
+    const onTouchMove = (e) => {
+      if (!mouseDown) return;
+      targetX += (e.touches[0].clientX - prevX) * 0.01;
+      prevX = e.touches[0].clientX;
     };
 
-    window.addEventListener("mousedown", (e) => onDown(e.clientX));
-    window.addEventListener("mouseup", onUp);
-    window.addEventListener("mousemove", (e) => onMove(e.clientX));
-
-    window.addEventListener("touchstart", (e) => onDown(e.touches[0].clientX));
-    window.addEventListener("touchend", onUp);
-    window.addEventListener("touchmove", (e) =>
-      onMove(e.touches[0].clientX)
-    );
+    window.addEventListener("touchstart", onTouchStart);
+    window.addEventListener("touchend", onTouchEnd);
+    window.addEventListener("touchmove", onTouchMove);
 
     // Resize
-    window.addEventListener("resize", () => {
+    const onResize = () => {
       sizes.width = window.innerWidth;
       sizes.height = window.innerHeight;
       camera.aspect = sizes.width / sizes.height;
       camera.updateProjectionMatrix();
       renderer.setSize(sizes.width, sizes.height);
-    });
+    };
 
-    // Animation
+    window.addEventListener("resize", onResize);
+
+    // Animation loop
     const animate = () => {
       requestAnimationFrame(animate);
 
-      // Auto-slide infinite
-      if (!mouse.isDown) {
+      if (!mouseDown) {
         targetX += 0.005;
         if (targetX > numMeshes) targetX = 0;
       }
 
       currentX += (targetX - currentX) * ease;
 
-      // Arc positioning
-      for (let i = 0; i < meshes.length; i++) {
+      for (let i = 0; i < numMeshes; i++) {
         const mesh = meshes[i];
         const offset = i - centerIndex + currentX;
-        const angle = offset * angleStep;
+        const angle = offset * (arcSpread / (numVisible - 1));
 
-        if (Math.abs(offset) > numVisible / 2) {
-          mesh.visible = false;
-          continue;
-        }
+        // Only show within visible range
+        mesh.visible = Math.abs(offset) <= numVisible / 2;
 
-        mesh.visible = true;
+        if (!mesh.visible) continue;
 
         mesh.position.x = radius * Math.sin(angle);
         mesh.position.z = radius * (1 - Math.cos(angle));
+
+        // 🔥 CENTER IMAGE SMALLER
+        if (Math.abs(offset) < 0.1) {
+          mesh.scale.set(1, 1, 1);
+        } else {
+          mesh.scale.set(1, 1, 1);
+        }
+
         mesh.lookAt(camera.position.x, 0, camera.position.z);
       }
 
@@ -176,38 +222,48 @@ export default function Home() {
     };
 
     animate();
+
+    // Cleanup
+    return () => {
+      window.removeEventListener("mousedown", onMouseDown);
+      window.removeEventListener("mouseup", onMouseUp);
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchend", onTouchEnd);
+      window.removeEventListener("touchmove", onTouchMove);
+      window.removeEventListener("resize", onResize);
+
+      renderer.dispose();
+      geometry.dispose();
+      meshes.forEach((m) => m.material.dispose());
+    };
   }, []);
 
   return (
     <div className="w-full h-screen overflow-hidden relative">
-
-      {/* HEADER */}
       <div className="absolute top-0 left-0 w-full z-30">
         <Header />
       </div>
 
-      {/* STATIC TOP TEXT */}
-      <div className="absolute top-[120px] w-full text-center z-30">
-        <h2 className="borel text-white">Hello There —</h2>
-        <h2 className="text-white text-4xl font-bold tracking-wide bruno">
+      <div className="absolute md:top-[120px] top-36 w-full text-center z-30">
+        <h2 className="borel md:text-base text-sm text-white">Hello There —</h2>
+        <h2 className="text-white xl:text-4xl lg:text-3xl md:text-2xl text-xl font-bold tracking-wide bruno">
           You’ve Entered a Creative Dimension
         </h2>
-        <GlassButtonDemo></GlassButtonDemo>
-        {/* <p className="text-white text-base poppins text-center mt-3">Welcome to the portfolio of Mazharul Islam — enjoy the experience.</p> */}
+        <GlassButtonDemo />
       </div>
 
-      {/* BACKGROUND */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <DarkVeil scanlineFrequency={1} scanlineIntensity={0.15} />
       </div>
 
-      {/* SLIDER CANVAS */}
-      <canvas ref={canvasRef} className="absolute top-7 inset-0 z-10 webgl" />
+      <canvas ref={canvasRef} className="absolute md:top-7 top-10 inset-0 z-10 webgl" />
 
-      {/* STATIC BOTTOM TEXT */}
-      <div className="absolute md:bottom-[100px] bottom-10 w-full text-center z-30">
-        <h2 className="text-white text-3xl opacity-90 dm-serif">
-        Introducing myself — I am <span className="autowide text-lg">Mazharul Islam</span> <br /> Frontend Developer 
+      <div className="absolute md:bottom-[100px] bottom-32 w-full text-center z-30">
+        <h2 className="text-white md:text-3xl text-2xl opacity-90 dm-serif">
+          Introducing myself — I am{" "}
+          <span className="autowide md:text-lg text-base">Mazharul Islam</span>
+          <br /> Frontend Developer
         </h2>
       </div>
     </div>
