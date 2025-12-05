@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import axios from "axios";
 import Marquee from "react-fast-marquee";
+import Aurora from "./Aurora";
 
 const Skills = () => {
   const [skills, setSkills] = useState([]);
@@ -51,12 +52,14 @@ const Skills = () => {
   };
 
   return (
-    <div className="py-10 bg-black">
+    <div className="py-10 relative bg-black">
       {loading && <p>Loading...</p>}
+
+      
       {error && <p>{error}</p>}
 
       {/* ⭐ SKILLS MARQUEE */}
-      <Marquee pauseOnHover speed={60} className="py-4">
+      <Marquee speed={50} className="py-4">
         {skills.map((skill, idx) => {
           const imgUrl = getImageUrl(skill);
           if (!imgUrl) return null;

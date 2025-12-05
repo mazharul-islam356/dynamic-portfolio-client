@@ -55,7 +55,7 @@ const teamMembers = [
     image: "/bodda.jpg",
     bio: "Visionary leader with 10+ years of experience."
   },
-  // ... more members
+  
 ];
 
 const ProjectsSection = () => {

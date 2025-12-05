@@ -1,4 +1,4 @@
-
+'use client'
 import Projects from "@/components/Projects"
 import Hero from "@/components/Hero"
 import MyService from "@/components/MyService"
@@ -6,6 +6,7 @@ import { SeasonalHoverCards } from "@/src/components/lightswind/seasonal-hover-c
 import Skills from "@/components/Skills";
 import AboutMe from "@/components/AboutMe";
 import Contact from "@/components/Contact";
+import LightPillar from "@/components/LightPillar"
 
 
 const cardArray = [
@@ -38,13 +39,32 @@ export default function HomePage() {
   return (
     <main>
       <Hero />
+
       <AboutMe></AboutMe>
+      <div className="relative">
+
       <Skills />
+  <Projects />
+<div className="absolute inset-0 z-0">
+  <LightPillar
+    topColor="#5227FF"
+    bottomColor="#FF9FFC"
+    intensity={1}
+    rotationSpeed={0.3}
+    glowAmount={0.002}
+    pillarWidth={2.6}
+    pillarHeight={0.4}
+    noiseIntensity={0.5}
+    pillarRotation={85}
+    interactive={false}
+    mixBlendMode="normal"
+  />
+</div>
+      </div>
       {/* <Services /> */}
       {/* <MyService></MyService> */}
       {/* <SeasonalHoverCards cards={cardArray} /> */}
 
-      <Projects />
       {/* <WorkExperience /> */}
       <Contact />
       {/* <Footer /> */}

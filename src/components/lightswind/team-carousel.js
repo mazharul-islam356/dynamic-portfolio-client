@@ -159,17 +159,14 @@ export const TeamCarousel = ({
   };
 
   /* -------------------------- Hover Animation (UPDATED) -------------------------- */
-  const hoverAnimation = {
-    width: responsiveWidth - 60,
-    height: responsiveHeight + 120,
-    transition: { duration: 0.5 },
-  };
+const hoverAnimation = {
+  width: responsiveWidth - 60,
+  height: responsiveHeight + 120,
+  transition: { duration: 0.5 },
+};
 
-  const imageHoverAnimation = {
-    y: -120,
-    backgroundPosition: "bottom",
-    transition: { duration: 1.5, ease: "easeOut" },
-  };
+
+
 
   /* --------------------------- Autoplay --------------------------- */
   useEffect(() => {
@@ -259,13 +256,28 @@ export const TeamCarousel = ({
                     onCardClick?.(member, index);
                   }}
                 >
-                  <motion.div
-                    className="w-full h-full bg-cover bg-center"
-                    style={{
-                      backgroundImage: `url(${member.image})`,
-                    }}
-                    whileHover={isActive ? imageHoverAnimation : {}}
-                  />
+                <motion.img
+  src={member.image}
+  className="w-full h-auto object-cover"
+  style={{
+    position: "absolute",
+    top: 0,
+    left: 0,
+  }}
+  initial={{ y: 0 }}
+  animate={{ y: 0 }}
+  whileHover={
+    isActive
+      ? {
+          y: (responsiveHeight - (responsiveHeight + 1100)), 
+          transition: { duration: 4.5, ease: "easeInOut" },
+        }
+      : {}
+  }
+/>
+
+
+
                 </motion.div>
               );
             })}
@@ -283,8 +295,8 @@ export const TeamCarousel = ({
                         color: infoTextColor,
                       }}
                     >
-                      <h3 className="font-bold">{member.name}</h3>
-                      <p className="opacity-80">{member.role}</p>
+                      <h3 className="font-bold text-white">{members.name}</h3>
+                      <p className="opacity-80">{members.role}</p>
                     </div>
                   )}
       </div>
