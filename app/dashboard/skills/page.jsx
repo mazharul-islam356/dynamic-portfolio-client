@@ -111,19 +111,19 @@ export default function SkillsAdmin() {
     if (skill.icon) {
       if (skill.icon.includes("undefined/api/images/")) {
         const iconId = skill.icon.split("/api/images/").pop()
-        return `http://localhost:5000/api/images/${iconId}`
+        return `https://mazhar-backend.vercel.app/api/images/${iconId}`
       }
       if (skill.icon.startsWith("http")) {
         return skill.icon
       }
       if (skill.icon.startsWith("/api/images/")) {
-        return `http://localhost:5000${skill.icon}`
+        return `https://mazhar-backend.vercel.app${skill.icon}`
       }
-      return `http://localhost:5000/api/images/${skill.icon}`
+      return `https://mazhar-backend.vercel.app/api/images/${skill.icon}`
     }
 
     if (skill.iconId) {
-      return `http://localhost:5000/api/images/${skill.iconId}`
+      return `https://mazhar-backend.vercel.app/api/images/${skill.iconId}`
     }
     return null
   }
@@ -196,7 +196,7 @@ export default function SkillsAdmin() {
                       <div className="flex items-center space-x-4">
                         <div className="w-16 h-16 bg-white rounded-xl shadow-sm border border-gray-200 flex items-center justify-center">
                           <img
-                            src={`http://localhost:5000/api/images/${form.iconId}`}
+                            src={`https://mazhar-backend.vercel.app/api/images/${form.iconId}`}
                             alt="Preview"
                             className="w-12 h-12 object-contain"
                             onError={(e) => {

@@ -15,7 +15,7 @@ const Skills = () => {
     setLoading(true);
     setError(null);
     axios
-      .get("http://localhost:5000/api/skills")
+      .get("https://mazhar-backend.vercel.app/api/skills")
       .then((res) => {
         setSkills(res.data);
       })
@@ -34,19 +34,19 @@ const Skills = () => {
     if (skill.icon) {
       if (skill.icon.includes("undefined/api/images/")) {
         const iconId = skill.icon.split("/api/images/").pop();
-        return `http://localhost:5000/api/images/${iconId}`;
+        return `https://mazhar-backend.vercel.app/api/images/${iconId}`;
       }
       if (skill.icon.startsWith("http")) {
         return skill.icon;
       }
       if (skill.icon.startsWith("/api/images/")) {
-        return `http://localhost:5000/api/${skill.icon}`;
+        return `https://mazhar-backend.vercel.app/api/${skill.icon}`;
       }
-      return `http://localhost:5000/api/images/${skill.icon}`;
+      return `https://mazhar-backend.vercel.app/api/images/${skill.icon}`;
     }
 
     if (skill.iconId) {
-      return `http://localhost:5000/api/images/${skill.iconId}`;
+      return `https://mazhar-backend.vercel.app/api/images/${skill.iconId}`;
     }
     return null;
   };

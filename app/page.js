@@ -45,7 +45,7 @@ export default function HomePage() {
 
       <Skills />
   <Projects />
-<div className="absolute inset-0 z-0">
+{/* <div className="absolute inset-0 z-0">
   <LightPillar
     topColor="#5227FF"
     bottomColor="#FF9FFC"
@@ -59,7 +59,7 @@ export default function HomePage() {
     interactive={false}
     mixBlendMode="normal"
   />
-</div>
+</div> */}
       </div>
       {/* <Services /> */}
       {/* <MyService></MyService> */}

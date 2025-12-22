@@ -20,7 +20,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Dynamic Portfolio",
+  title: "Mazharul Islam",
   description: "A dynamic portfolio",
 };
 
