@@ -33,7 +33,7 @@ export default function HeroAdmin() {
         },
       })
       const imageId = res.data.fileId
-      const imageUrl = `https://mazhar-backend.vercel.app/api/images/${imageId}`
+      const imageUrl = `http://localhost:5000/api/images/${imageId}`
       setForm((prev) => ({ ...prev, image: imageUrl }))
       toast.success("Image uploaded successfully!")
     } catch (err) {

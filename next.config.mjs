@@ -15,7 +15,7 @@ const nextConfig = {
     return [
       {
         source: "/api/images/:path*",
-        destination: "https://mazhar-backend.vercel.app/api/images/:path*",
+        destination: "http://localhost:5000/api/images/:path*",
       },
     ];
   },

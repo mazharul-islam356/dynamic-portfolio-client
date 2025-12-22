@@ -191,6 +191,13 @@ const hoverAnimation = {
   };
 
   
+const titleSizeClasses = {
+    sm: 'text-4xl',
+    md: 'text-5xl',
+    lg: 'text-6xl',
+    xl: 'text-7xl',
+    '2xl': 'text-8xl',
+  };
 
   /* ---------------------------- UI ---------------------------- */
   return (
@@ -204,8 +211,25 @@ const hoverAnimation = {
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
+      {title && (
+        <h2
+          className={cn(
+            "font-black uppercase tracking-tight text-white absolute top-1 left-1/2 transform -translate-x-1/2 pointer-events-none whitespace-nowrap",
+            titleSizeClasses[titleSize],
+            titleClassName
+          )}
+          style={{
+            color: 'transparent',
+            background: `linear-gradient(to bottom, ${titleColor}75 40%, transparent 76%)`,
+            WebkitBackgroundClip: 'text',
+            backgroundClip: 'text',
+          }}
+        >
+          {title}
+        </h2>
+      )}
       <div
-        className="w-full max-w-6xl relative mt-24"
+        className="w-full max-w-6xl relative"
         style={{ height: responsiveHeight + 120 }}
       >
         {/* Arrows */}

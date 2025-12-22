@@ -283,7 +283,7 @@ export default function ProjectsAdmin() {
                     {/* Project Image */}
                     <div className="relative h-48 bg-gradient-to-br from-slate-100 to-slate-200">
                       <img
-                        src={`https://mazhar-backend.vercel.app/api/images/${project.imageId}`}
+                        src={`http://localhost:5000/api/images/${project.imageId}`}
                         alt={project.title}
                         className="w-full h-full object-cover"
                       />

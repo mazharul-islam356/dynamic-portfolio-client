@@ -15,7 +15,7 @@ const Skills = () => {
     setLoading(true);
     setError(null);
     axios
-      .get("https://mazhar-backend.vercel.app/api/skills")
+      .get("http://localhost:5000/api/skills")
       .then((res) => {
         setSkills(res.data);
       })
@@ -34,19 +34,19 @@ const Skills = () => {
     if (skill.icon) {
       if (skill.icon.includes("undefined/api/images/")) {
         const iconId = skill.icon.split("/api/images/").pop();
-        return `https://mazhar-backend.vercel.app/api/images/${iconId}`;
+        return `http://localhost:5000/api/images/${iconId}`;
       }
       if (skill.icon.startsWith("http")) {
         return skill.icon;
       }
       if (skill.icon.startsWith("/api/images/")) {
-        return `https://mazhar-backend.vercel.app/api/${skill.icon}`;
+        return `http://localhost:5000/api/${skill.icon}`;
       }
-      return `https://mazhar-backend.vercel.app/api/images/${skill.icon}`;
+      return `http://localhost:5000/api/images/${skill.icon}`;
     }
 
     if (skill.iconId) {
-      return `https://mazhar-backend.vercel.app/api/images/${skill.iconId}`;
+      return `http://localhost:5000/api/images/${skill.iconId}`;
     }
     return null;
   };
@@ -76,6 +76,7 @@ const Skills = () => {
                      inset_0_1px_2px_rgba(255,255,255,0.25)]"
 >
   {/* GLASS REFLECTION */}
+  
   <span
     className="absolute border-2 border-gray-50/10 inset-0 rounded-full pointer-events-none"
     style={{

@@ -6,7 +6,8 @@ import { SeasonalHoverCards } from "@/src/components/lightswind/seasonal-hover-c
 import Skills from "@/components/Skills";
 import AboutMe from "@/components/AboutMe";
 import Contact from "@/components/Contact";
-import LightPillar from "@/components/LightPillar"
+import Plasma from "@/components/Plasma"
+import FloatingLines from "@/components/FloatingLines"
 
 
 const cardArray = [
@@ -45,28 +46,47 @@ export default function HomePage() {
 
       <Skills />
   <Projects />
-{/* <div className="absolute inset-0 z-0">
-  <LightPillar
+<div className="absolute inset-0 z-0">
+  {/* <LightPillar
     topColor="#5227FF"
     bottomColor="#FF9FFC"
-    intensity={1}
-    rotationSpeed={0.3}
+    intensity={0.5}
+    rotationSpeed={0.5}
     glowAmount={0.002}
-    pillarWidth={2.6}
-    pillarHeight={0.4}
+    pillarWidth={3.4}
+    pillarHeight={0.3}
     noiseIntensity={0.5}
-    pillarRotation={85}
+    pillarRotation={91}
     interactive={false}
-    mixBlendMode="normal"
+    mixBlendMode="screen"
+  /> */}
+  <FloatingLines 
+    enabledWaves={['top', 'middle']}
+    // Array - specify line count per wave; Number - same count for all waves
+    lineCount={3}
+    // Array - specify line distance per wave; Number - same distance for all waves
+    lineDistance={4}
+    bendRadius={5}
+    bendStrength={-0.5}
+    interactive={true}
+    parallax={true}
   />
-</div> */}
+  {/* <Plasma 
+    color="#ff6b35"
+    speed={0.6}
+    direction="forward"
+    scale={1.1}
+    opacity={0.8}
+    mouseInteractive={true}
+  /> */}
+</div>
       </div>
       {/* <Services /> */}
       {/* <MyService></MyService> */}
+      <Contact />
       {/* <SeasonalHoverCards cards={cardArray} /> */}
 
       {/* <WorkExperience /> */}
-      <Contact />
       {/* <Footer /> */}
     </main>
   )

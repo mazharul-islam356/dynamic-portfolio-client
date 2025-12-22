@@ -3,8 +3,8 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import Header from "./Header";
-import DarkVeil from "./FloatingLines";
 import GlassButtonDemo from "./GlassButton";
+import DarkVeil from "./DarkVeil";
 
 export default function Home() {
   const canvasRef = useRef(null);

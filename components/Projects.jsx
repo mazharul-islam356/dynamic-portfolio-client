@@ -93,6 +93,7 @@ const ProjectsSection = () => {
 
   return (
     <section className="bg-black text-white py-20 px-4 sm:px-6 lg:px-8">
+      
       <TeamCarousel 
       members={teamMembers}
       title="OUR TEAM"
