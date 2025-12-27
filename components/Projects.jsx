@@ -92,11 +92,11 @@ const ProjectsSection = () => {
   
 
   return (
-    <section className="bg-black text-white py-20 px-4 sm:px-6 lg:px-8">
-      
+    <section className="bg-black text-white pb-20 px-4">
+      <h1 className="text-white text-4xl">My Showcase</h1>
       <TeamCarousel 
       members={teamMembers}
-      title="OUR TEAM"
+      title="Project Showcase"
       background="black"
       // autoPlay={10000}
       onMemberChange={(member, index) => {

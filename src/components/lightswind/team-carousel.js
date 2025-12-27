@@ -3,12 +3,14 @@ import React, { useState, useCallback, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "../lib/utils";
+import ShinyText from "./shiny-text";
+import ShinyTitle from "@/components/ShinyTitle";
 
 export const TeamCarousel = ({
   members,
   title = "Project Showcase",
-  titleSize = "2xl",
-  titleColor = "rgba(0, 76, 255, 1)",
+  titleSize = "xl",
+  titleColor = "white",
   background,
   cardWidth = 500,
   cardHeight = 300,
@@ -192,11 +194,11 @@ const hoverAnimation = {
 
   
 const titleSizeClasses = {
-    sm: 'text-4xl',
-    md: 'text-5xl',
-    lg: 'text-6xl',
-    xl: 'text-7xl',
-    '2xl': 'text-8xl',
+    sm: 'text-2xl',
+    md: 'text-3xl',
+    lg: 'text-4xl',
+    xl: 'text-5xl',
+    '2xl': 'text-5xl',
   };
 
   /* ---------------------------- UI ---------------------------- */
@@ -212,22 +214,27 @@ const titleSizeClasses = {
       onTouchEnd={handleTouchEnd}
     >
       {title && (
-        <h2
-          className={cn(
-            "font-black uppercase tracking-tight text-white absolute top-1 left-1/2 transform -translate-x-1/2 pointer-events-none whitespace-nowrap",
-            titleSizeClasses[titleSize],
-            titleClassName
-          )}
-          style={{
-            color: 'transparent',
-            background: `linear-gradient(to bottom, ${titleColor}75 40%, transparent 76%)`,
-            WebkitBackgroundClip: 'text',
-            backgroundClip: 'text',
-          }}
-        >
-          {title}
-        </h2>
-      )}
+  <h2
+    className={cn(
+      "font-black hero-font uppercase tracking-tight absolute left-1/2 -translate-x-1/2 whitespace-nowrap z-10",
+      titleSizeClasses[titleSize],
+      titleClassName
+    )}
+    style={{
+      top: "4rem",
+      color: titleColor,
+    }}
+  >
+    <ShinyTitle
+  text={title}
+  disabled={false} 
+  speed={3} 
+  className='custom-class' 
+/>
+   
+  </h2>
+)}
+
       <div
         className="w-full max-w-6xl relative"
         style={{ height: responsiveHeight + 120 }}

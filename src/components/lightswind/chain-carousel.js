@@ -130,7 +130,7 @@ const ChainCarousel = ({ items, scrollSpeedMs = 3000, visibleItemCount = 9, clas
         <div className="flex flex-col text-center gap-4 max-w-md">
           {currentItem && (
             <div className="flex flex-col items-center justify-center gap-0 mt-4">
-              <div className="p-2 bg-foreground rounded-full">
+              <div className="p-2 rounded-full">
                 {currentItem.logo ? (
                   <img src={currentItem.logo} className="size-12 rounded-full object-cover" />
                 ) : (

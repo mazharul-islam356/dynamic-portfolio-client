@@ -4,9 +4,12 @@ import ParticleCard, { MagicBento } from "./MagicBento"
 
 export default function AboutMe() {
   return (
-    <div className="min-h-screen bg-black text-white p-6">
+    <div className="min-h-screen bg-black text-white p-6 relative">
       <div className="max-w-7xl mx-auto">
-      
+          {/* Animated background orbs */}
+ <div className="absolute top-0 left-10 w-72 h-72 bg-purple-500/20 rounded-full blur-[100px] animate-pulse" />
+   <div className="absolute bottom-0 right-20 w-96 h-96 bg-purple-500/15 rounded-full blur-[120px] animate-pulse delay-1000" />
+    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[150px]" />
         {/* Glowing Cards Grid */}
         <MagicBento
           enableSpotlight={true}
@@ -39,7 +42,7 @@ export default function AboutMe() {
           <ParticleCard className="card col-span-2 md:col-span-1" glowColor="132, 0, 255">
             <div className="card-content">
               <h3 className="text-xl font-semibold mb-4">About Me</h3>
-              <p className="text-purple-400 font-medium mb-3">● Open to work</p>
+              <p className="text-purple-400 font-medium mb-3 animate-pulse">● Open to work</p>
               <p className="text-gray-300 leading-relaxed text-sm">
                 Visual Designer with 7+ years of experience. I'm all about crafting user-friendly interfaces that are
                 functional and visually compelling.

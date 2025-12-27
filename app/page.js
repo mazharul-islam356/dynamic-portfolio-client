@@ -63,9 +63,9 @@ export default function HomePage() {
   <FloatingLines 
     enabledWaves={['top', 'middle']}
     // Array - specify line count per wave; Number - same count for all waves
-    lineCount={3}
+    lineCount={4}
     // Array - specify line distance per wave; Number - same distance for all waves
-    lineDistance={4}
+    lineDistance={5}
     bendRadius={5}
     bendStrength={-0.5}
     interactive={true}
@@ -80,9 +80,10 @@ export default function HomePage() {
     mouseInteractive={true}
   /> */}
 </div>
+
       </div>
       {/* <Services /> */}
-      {/* <MyService></MyService> */}
+      <MyService></MyService>
       <Contact />
       {/* <SeasonalHoverCards cards={cardArray} /> */}
 
