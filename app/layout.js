@@ -7,7 +7,6 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 
-
 const poppins = Poppins({
   variable: "--font-poppins",
   subsets: ["latin"],
