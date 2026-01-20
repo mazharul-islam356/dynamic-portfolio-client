@@ -52,10 +52,9 @@ const Skills = () => {
   };
 
   return (
-    <div className="py-10 relative bg-black">
+    <div className="py-10 relative bg-transparent">
       {loading && <p>Loading...</p>}
 
-      
       {error && <p>{error}</p>}
 
       {/* ⭐ SKILLS MARQUEE */}
@@ -65,42 +64,39 @@ const Skills = () => {
           if (!imgUrl) return null;
 
           return (
-           <div
-  key={idx}
-  className="relative mx-6 flex items-center justify-center
+            <div
+              key={idx}
+              className="relative mx-6 flex items-center justify-center
              w-24 h-24 rounded-full overflow-hidden
              bg-transparent
              backdrop-blur-xl
              border border-white/10
              shadow-[0_4px_20px_rgba(0,0,0,0.2),
                      inset_0_1px_2px_rgba(255,255,255,0.25)]"
->
-  {/* GLASS REFLECTION */}
-  
-  <span
-    className="absolute border-2 border-gray-50/10 inset-0 rounded-full pointer-events-none"
-    style={{
-      background:
-        "linear-gradient(145deg, rgba(255,255,255,0.25), rgba(255,255,255,0))",
-    }}
-  />
+            >
+              {/* GLASS REFLECTION */}
 
-  {/* IMAGE */}
-  <Image
-    width={80}
-    height={80}
-    src={imgUrl}
-    alt={skill.name}
-    className="relative w-20 h-20 object-contain rounded-full z-10"
-  />
-</div>
+              <span
+                className="absolute border-2 border-gray-50/10 inset-0 rounded-full pointer-events-none"
+                style={{
+                  background:
+                    "linear-gradient(145deg, rgba(255,255,255,0.25), rgba(255,255,255,0))",
+                }}
+              />
 
+              {/* IMAGE */}
+              <Image
+                width={80}
+                height={80}
+                src={imgUrl}
+                alt={skill.name}
+                className="relative w-20 h-20 object-contain rounded-full z-10"
+              />
+            </div>
           );
         })}
       </Marquee>
     </div>
-
-   
   );
 };
 

@@ -1,10 +1,9 @@
-'use client';
+"use client";
 
+import ChainCarousel from "@/src/components/lightswind/chain-carousel";
 
-import ChainCarousel from '@/src/components/lightswind/chain-carousel';
-import GlowingCards, { GlowingCard } from '@/src/components/lightswind/glowing-cards';
-import React from 'react';
-import { chainsList } from './chainsList';
+import React from "react";
+import { chainsList } from "./chainsList";
 
 const MyService = () => {
   return (

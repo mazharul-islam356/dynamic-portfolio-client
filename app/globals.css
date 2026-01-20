@@ -1,9 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Borel&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Bruno+Ace+SC&family=Cinzel:wght@400..900&family=Science+Gothic:wght@100..900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Dongle&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Audiowide&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Borel&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Bruno+Ace+SC&family=Cinzel:wght@400..900&family=Science+Gothic:wght@100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Dongle&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Audiowide&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -52,38 +52,38 @@
 
 /* fonts */
 
-.autowide{
+.autowide {
   font-family: "Audiowide", sans-serif;
 }
 
-.poppins{
+.poppins {
   font-family: var(--font-poppins);
 }
-.dm-serif{
+.dm-serif {
   font-family: "Dongle", sans-serif;
 }
 
-.hero-font{
-   font-family: "Rajdhani", sans-serif;
+.hero-font {
+  font-family: "Rajdhani", sans-serif;
 }
 
-.hero-desc{
-   font-family: "Montserrat Alternates", sans-serif;
+.hero-desc {
+  font-family: "Montserrat Alternates", sans-serif;
 }
 
-.borel{
+.borel {
   font-family: "Borel", cursive;
 }
 
-.cinzel{
+.cinzel {
   font-family: "Cinzel", serif;
 }
 
-.bruno{
+.bruno {
   font-family: "Bruno Ace SC", sans-serif;
 }
 
-.science{
+.science {
   font-family: "Science Gothic", sans-serif;
 }
 
@@ -168,5 +168,88 @@ body {
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+.glow {
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(
+    circle,
+    rgba(168, 85, 247, 0.35) 0%,
+    transparent 70%
+  );
+  padding-top: 10rem;
+  filter: blur(80px);
+  z-index: 100px;
+  animation: floatGlow 12s infinite ease-in-out;
+}
+
+.glow-1 {
+  top: 50px;
+  left: -100px;
+  z-index: -10px;
+}
+.glow-2 {
+  bottom: -200px;
+  right: -150px;
+  animation-delay: 4s;
+}
+.glow-3 {
+  top: 30%;
+  right: 20%;
+  animation-delay: 7s;
+}
+
+.glow-4 {
+  top: 60%;
+  right: 20%;
+  animation-delay: 7s;
+}
+
+@keyframes floatGlow {
+  0% {
+    transform: translateY(0) translateX(0);
+  }
+  50% {
+    transform: translateY(-40px) translateX(40px);
+  }
+  100% {
+    transform: translateY(0) translateX(0);
+  }
+}
+
+/* Light streaks */
+
+.streak {
+  position: absolute;
+  width: 120%;
+  height: 180px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(168, 85, 247, 0.25),
+    transparent
+  );
+  filter: blur(60px);
+  animation: moveStreak 14s linear infinite;
+}
+
+.streak-1 {
+  top: 20%;
+}
+
+.streak-2 {
+  top: 60%;
+  animation-delay: 7s;
+}
+
+@keyframes moveStreak {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
   }
 }

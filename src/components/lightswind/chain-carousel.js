@@ -1,24 +1,34 @@
-import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import { motion } from 'framer-motion';
-import { TrendingUp, Search, DeleteIcon } from 'lucide-react';
+import { useState, useEffect, useCallback, useMemo } from "react";
+import { motion } from "framer-motion";
 
 // Placeholder Input
 const Input = (props) => <input {...props} />;
 
 // Carousel Item Card
 const CarouselItemCard = ({ chain, side }) => {
-  const { distanceFromCenter, id, name, details, logo, icon: FallbackIcon } = chain;
+  const {
+    distanceFromCenter,
+    id,
+    name,
+    details,
+    logo,
+    icon: FallbackIcon,
+  } = chain;
   const distance = Math.abs(distanceFromCenter);
 
   const opacity = 1 - distance / 4;
   const scale = 1 - distance * 0.1;
   const yOffset = distanceFromCenter * 90;
-  const xOffset = side === 'left' ? -distance * 40 : distance * 40;
+  const xOffset = side === "left" ? -distance * 40 : distance * 40;
 
   const IconOrLogo = (
     <div className="rounded-full border border-muted-foreground/60 dark:border-muted-foreground/40 p-2 bg-foreground">
       {logo ? (
-        <img src={logo} alt={`${name} logo`} className="size-8 rounded-full object-cover" />
+        <img
+          src={logo}
+          alt={`${name} logo`}
+          className="size-8 rounded-full object-cover"
+        />
       ) : (
         <FallbackIcon className="size-8 text-background" />
       )}
@@ -29,18 +39,22 @@ const CarouselItemCard = ({ chain, side }) => {
     <motion.div
       key={id}
       className={`absolute flex items-center gap-4 text-background px-6 py-3 
-        ${side === 'left' ? 'flex-row-reverse' : 'flex-row'}`}
+        ${side === "left" ? "flex-row-reverse" : "flex-row"}`}
       animate={{
         opacity,
         scale,
         y: yOffset,
         x: xOffset,
       }}
-      transition={{ duration: 0.4, ease: 'easeInOut' }}
+      transition={{ duration: 0.4, ease: "easeInOut" }}
     >
       {IconOrLogo}
-      <div className={`flex flex-col mx-4 ${side === 'left' ? 'text-right' : 'text-left'}`}>
-        <span className="text-md lg:text-lg font-semibold text-foreground whitespace-nowrap">{name}</span>
+      <div
+        className={`flex flex-col mx-4 ${side === "left" ? "text-right" : "text-left"}`}
+      >
+        <span className="text-md lg:text-lg font-semibold text-foreground whitespace-nowrap">
+          {name}
+        </span>
         <span className="text-xs lg:text-sm text-gray-500">{details}</span>
       </div>
     </motion.div>
@@ -48,10 +62,16 @@ const CarouselItemCard = ({ chain, side }) => {
 };
 
 // Main Component
-const ChainCarousel = ({ items, scrollSpeedMs = 3000, visibleItemCount = 9, className = '', onChainSelect }) => {
+const ChainCarousel = ({
+  items,
+  scrollSpeedMs = 3000,
+  visibleItemCount = 9,
+  className = "",
+  onChainSelect,
+}) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
 
   const totalItems = items.length;
@@ -72,7 +92,8 @@ const ChainCarousel = ({ items, scrollSpeedMs = 3000, visibleItemCount = 9, clas
     const visibleItems = [];
     if (totalItems === 0) return [];
 
-    const itemsToShow = visibleItemCount % 2 === 0 ? visibleItemCount + 1 : visibleItemCount;
+    const itemsToShow =
+      visibleItemCount % 2 === 0 ? visibleItemCount + 1 : visibleItemCount;
     const half = Math.floor(itemsToShow / 2);
 
     for (let i = -half; i <= half; i++) {
@@ -91,8 +112,11 @@ const ChainCarousel = ({ items, scrollSpeedMs = 3000, visibleItemCount = 9, clas
 
   // Search filter
   const filteredItems = useMemo(
-    () => items.filter((item) => item.name.toLowerCase().includes(searchTerm.toLowerCase())),
-    [items, searchTerm]
+    () =>
+      items.filter((item) =>
+        item.name.toLowerCase().includes(searchTerm.toLowerCase()),
+      ),
+    [items, searchTerm],
   );
 
   const handleSelectChain = (id, name) => {
@@ -111,15 +135,19 @@ const ChainCarousel = ({ items, scrollSpeedMs = 3000, visibleItemCount = 9, clas
   return (
     <div id="explore-section" className={`space-y-20 ${className}`}>
       <div className="flex flex-col xl:flex-row max-w-7xl mx-auto px-4 md:px-8 gap-12 justify-center items-center">
-
         {/* Left Carousel */}
         <motion.div
           className="relative w-full max-w-md xl:max-w-2xl h-[450px] flex items-center justify-center hidden xl:flex -left-14"
           onMouseEnter={() => !searchTerm && setIsPaused(true)}
           onMouseLeave={() => !searchTerm && setIsPaused(false)}
-          initial={{ x: '-100%', opacity: 0 }}
+          initial={{ x: "-100%", opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
-          transition={{ type: 'spring', stiffness: 80, damping: 20, duration: 0.8 }}
+          transition={{
+            type: "spring",
+            stiffness: 80,
+            damping: 20,
+            duration: 0.8,
+          }}
         >
           {getVisibleItems().map((chain) => (
             <CarouselItemCard key={chain.id} chain={chain} side="left" />
@@ -132,17 +160,22 @@ const ChainCarousel = ({ items, scrollSpeedMs = 3000, visibleItemCount = 9, clas
             <div className="flex flex-col items-center justify-center gap-0 mt-4">
               <div className="p-2 rounded-full">
                 {currentItem.logo ? (
-                  <img src={currentItem.logo} className="size-12 rounded-full object-cover" />
+                  <img
+                    src={currentItem.logo}
+                    className="size-12 rounded-full object-cover"
+                  />
                 ) : (
                   <currentItem.icon className="size-8 text-background" />
                 )}
               </div>
-              <h3 className="text-xl xl:text-2xl font-bold text-foreground mt-2">{currentItem.name}</h3>
-              <p className="text-sm xl:text-lg text-gray-400">{currentItem.details}</p>
+              <h3 className="text-xl xl:text-2xl font-bold text-foreground mt-2">
+                {currentItem.name}
+              </h3>
+              <p className="text-sm xl:text-lg text-gray-400">
+                {currentItem.details}
+              </p>
             </div>
           )}
-
-        
         </div>
 
         {/* Right Carousel */}
@@ -150,15 +183,19 @@ const ChainCarousel = ({ items, scrollSpeedMs = 3000, visibleItemCount = 9, clas
           className="relative w-full max-w-md xl:max-w-2xl h-[450px] flex items-center justify-center -right-14"
           onMouseEnter={() => !searchTerm && setIsPaused(true)}
           onMouseLeave={() => !searchTerm && setIsPaused(false)}
-          initial={{ x: '100%', opacity: 0 }}
+          initial={{ x: "100%", opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
-          transition={{ type: 'spring', stiffness: 80, damping: 20, duration: 0.8 }}
+          transition={{
+            type: "spring",
+            stiffness: 80,
+            damping: 20,
+            duration: 0.8,
+          }}
         >
           {getVisibleItems().map((chain) => (
             <CarouselItemCard key={chain.id} chain={chain} side="right" />
           ))}
         </motion.div>
-
       </div>
     </div>
   );

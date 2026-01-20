@@ -1,5 +1,8 @@
 "use client";
 
+import Image from "next/image";
+import Link from "next/link";
+
 export default function Header() {
   return (
     <header className="w-full flex justify-center text-white pt-6 px-4">
@@ -17,19 +20,41 @@ export default function Header() {
       >
         {/* Left Logo + Title */}
         <div className="flex items-center gap-3">
-         
-
-          <p className="text-white font-semibold text-lg">Mazhar</p>
+          <Image
+            className="w-10"
+            alt="logo"
+            width={50}
+            height={50}
+            src="/logo.png"
+          ></Image>
         </div>
 
         {/* Right Menu Links */}
-        <div className="flex items-center gap-8">
-          <a className="text-white/90 hover:text-white font-semibold cursor-pointer">
+        <div className="flex items-center gap-8 font-poppins">
+          <Link
+            href={"/"}
+            className="text-white/90 hover:text-white font-medium text-sm cursor-pointer"
+          >
             Home
-          </a>
-          <a className="text-white/90 hover:text-white font-semibold cursor-pointer">
-            Docs
-          </a>
+          </Link>
+          <Link
+            href="/"
+            className="text-white/90 hover:text-white font-medium text-sm cursor-pointer"
+          >
+            Blogs
+          </Link>
+          <Link
+            href="/"
+            className="text-white/90 hover:text-white font-medium text-sm cursor-pointer"
+          >
+            About
+          </Link>
+          <Link
+            href="/"
+            className="text-white/90 hover:text-white font-medium text-sm cursor-pointer"
+          >
+            Projects
+          </Link>
         </div>
       </nav>
     </header>
