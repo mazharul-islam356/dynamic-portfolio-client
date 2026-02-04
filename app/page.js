@@ -9,6 +9,7 @@ import Contact from "@/components/Contact";
 import Plasma from "@/components/Plasma";
 import FloatingLines from "@/components/FloatingLines";
 import PurpleGlowBackground from "@/components/GlowingBallsBackground";
+import Experience from "@/components/WorkExperience";
 
 const cardArray = [
   {
@@ -51,6 +52,7 @@ export default function HomePage() {
           <AboutMe />
           <Skills />
           <Projects />
+          <Experience />
         </div>
       </section>
       {/* <Services /> */}

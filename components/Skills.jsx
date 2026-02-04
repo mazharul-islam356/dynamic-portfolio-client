@@ -62,7 +62,7 @@ const Skills = () => {
         {skills.map((skill, idx) => {
           const imgUrl = getImageUrl(skill);
           if (!imgUrl) return null;
-
+          console.log(imgUrl);
           return (
             <div
               key={idx}
@@ -86,8 +86,8 @@ const Skills = () => {
 
               {/* IMAGE */}
               <Image
-                width={80}
-                height={80}
+                width={100}
+                height={100}
                 src={imgUrl}
                 alt={skill.name}
                 className="relative w-20 h-20 object-contain rounded-full z-10"
