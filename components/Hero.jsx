@@ -119,7 +119,7 @@ export default function Home() {
       70,
       sizes.width / sizes.height,
       0.01,
-      20
+      20,
     );
     camera.position.z = 5.5;
     scene.add(camera);
@@ -150,8 +150,7 @@ export default function Home() {
 
     const onMouseMove = (e) => {
       if (!mouseDown) return;
-      targetX += (e.clientX - prevX) * 0.01;
-      prevX = e.clientX;
+      targetX -= (e.clientX - prevX) * 0.01;
     };
 
     window.addEventListener("mousedown", onMouseDown);
@@ -165,7 +164,7 @@ export default function Home() {
     const onTouchEnd = () => (mouseDown = false);
     const onTouchMove = (e) => {
       if (!mouseDown) return;
-      targetX += (e.touches[0].clientX - prevX) * 0.01;
+      targetX -= (e.touches[0].clientX - prevX) * 0.01;
       prevX = e.touches[0].clientX;
     };
 
@@ -185,35 +184,41 @@ export default function Home() {
     window.addEventListener("resize", onResize);
 
     // Animation loop
+    const wrap = (v, max) => ((v % max) + max) % max;
+
     const animate = () => {
       requestAnimationFrame(animate);
 
+      // ✅ auto move: left -> right
       if (!mouseDown) {
-        targetX += 0.005;
-        if (targetX > numMeshes) targetX = 0;
+        targetX -= 0.005;
       }
 
+      // smooth easing
       currentX += (targetX - currentX) * ease;
 
       for (let i = 0; i < numMeshes; i++) {
         const mesh = meshes[i];
-        const offset = i - centerIndex + currentX;
-        const angle = offset * (arcSpread / (numVisible - 1));
+
+        /**
+         * ✅ Infinite loop offset:
+         * raw grows/shrinks forever, but we wrap it so items always stay around center.
+         */
+        const raw = i - currentX;
+        const w = wrap(raw + centerIndex, numMeshes) - centerIndex; // range around center
+
+        const angle = w * (arcSpread / (numVisible - 1));
 
         // Only show within visible range
-        mesh.visible = Math.abs(offset) <= numVisible / 2;
-
+        mesh.visible = Math.abs(w) <= numVisible / 2;
         if (!mesh.visible) continue;
 
+        // curved positions
         mesh.position.x = radius * Math.sin(angle);
         mesh.position.z = radius * (1 - Math.cos(angle));
 
-        // 🔥 CENTER IMAGE SMALLER
-        if (Math.abs(offset) < 0.1) {
-          mesh.scale.set(1, 1, 1);
-        } else {
-          mesh.scale.set(1, 1, 1);
-        }
+        // ✅ no center scaling (all same)
+        mesh.scale.set(1, 1, 1);
 
         mesh.lookAt(camera.position.x, 0, camera.position.z);
       }
@@ -240,12 +245,12 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="w-full h-screen overflow-hidden relative">
+    <div className="w-full h-[90vh] overflow-hidden relative">
       <div className="absolute top-0 left-0 w-full z-30">
         <Header />
       </div>
 
-      <div className="absolute md:top-[120px] top-36 w-full text-center z-30">
+      <div className="absolute md:top-36 top-40 w-full text-center md:z-30 z-10">
         <h2 className="borel md:text-base text-sm text-white">Hello There —</h2>
         <h2 className="text-white xl:text-4xl lg:text-3xl md:text-2xl text-xl font-bold tracking-wide bruno">
           You’ve Entered a Creative Dimension
@@ -257,9 +262,12 @@ export default function Home() {
         <DarkVeil scanlineFrequency={1} scanlineIntensity={0.15} />
       </div>
 
-      <canvas ref={canvasRef} className="absolute md:top-7 top-10 inset-0 z-10 webgl" />
+      <canvas
+        ref={canvasRef}
+        className="absolute md:top-15 top-10 inset-0 z-10 webgl"
+      />
 
-      <div className="absolute md:bottom-[100px] bottom-32 w-full text-center z-30">
+      <div className="absolute md:bottom-10 bottom-20 w-full text-center md:z-30 z-10">
         <h2 className="text-white md:text-3xl text-2xl opacity-90 dm-serif">
           Introducing myself — I am{" "}
           <span className="autowide md:text-lg text-base">Mazharul Islam</span>

@@ -4,7 +4,7 @@ import ParticleCard, { MagicBento } from "./MagicBento";
 
 export default function AboutMe() {
   return (
-    <div className="min-h-screen bg-black text-white p-6 relative">
+    <div className="min-h-screen bg-black text-white relative">
       <div className="max-w-7xl mx-auto">
         {/* Animated background orbs */}
         <div className="absolute top-0 left-10 w-72 h-72 bg-purple-500/20 rounded-full blur-[100px] animate-pulse" />
@@ -25,12 +25,12 @@ export default function AboutMe() {
             className="card col-span-2 md:col-span-1 row-span-2"
             glowColor="132, 0, 255"
           >
-            <div className="card-content flex flex-col items-center justify-center h-full">
+            <div className="card-content flex flex-col items-center justify-center h-full z-1000">
               <div className="w-48 h-48 rounded-lg overflow-hidden mb-6 border-2 border-purple-500/50">
                 <Image
                   width={192}
                   height={192}
-                  src="/myImg.jpg"
+                  src="/myImage2.jpg"
                   alt="Profile"
                   className="object-cover w-full h-full"
                 />

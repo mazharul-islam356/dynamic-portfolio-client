@@ -82,7 +82,7 @@ const Skills = () => {
   // }, []);
 
   return (
-    <div className="py-10 relative bg-transparent">
+    <div className="md:py-10 pt-10 relative bg-transparent">
       {/* ⭐ SKILLS MARQUEE */}
       <Marquee speed={50} className="py-4">
         {skills.map((skill, idx) => {
@@ -91,7 +91,7 @@ const Skills = () => {
             <div
               key={idx}
               className="relative mx-6 flex items-center justify-center
-             w-24 h-24 rounded-full overflow-hidden
+             md:w-24 md:h-24 h-16 w-16 rounded-full overflow-hidden
              bg-transparent
              backdrop-blur-xl
              border border-white/10

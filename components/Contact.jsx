@@ -5,6 +5,9 @@ import React, { useState } from "react";
 import ShinyTitle from "./ShinyTitle";
 import { cn } from "@/lib/utils";
 import Footer from "./Footer";
+import Link from "next/link";
+import { Facebook } from "lucide-react";
+import { FaWhatsapp } from "react-icons/fa";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -73,8 +76,8 @@ const Contact = () => {
     }
   };
   const titleSizeClasses = {
-    sm: "text-2xl",
-    md: "text-3xl",
+    sm: "text-xl",
+    md: "text-2xl",
     lg: "text-4xl",
     xl: "text-5xl",
     "2xl": "text-5xl",
@@ -97,8 +100,8 @@ const Contact = () => {
         </svg>
       ),
       label: "Email",
-      value: "hello@yourname.com",
-      href: "mailto:hello@yourname.com",
+      value: "mazharulislam3569@gmail.com",
+      href: "mailto:mazharulislam3569@gmail.com",
     },
     {
       icon: (
@@ -117,8 +120,8 @@ const Contact = () => {
         </svg>
       ),
       label: "Phone",
-      value: "+1 (555) 123-4567",
-      href: "tel:+15551234567",
+      value: "+8801866186426",
+      href: "tel:+8801866186426",
     },
     {
       icon: (
@@ -143,7 +146,7 @@ const Contact = () => {
         </svg>
       ),
       label: "Location",
-      value: "San Francisco, CA",
+      value: "Demra, Dhaka, Bangladesh",
       href: "#",
     },
   ];
@@ -151,7 +154,7 @@ const Contact = () => {
   const socialLinks = [
     {
       name: "GitHub",
-      href: "https://github.com/yourusername",
+      href: "https://github.com/mazharul-islam356",
       icon: (
         <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
           <path
@@ -164,7 +167,7 @@ const Contact = () => {
     },
     {
       name: "LinkedIn",
-      href: "https://linkedin.com/in/yourusername",
+      href: "https://www.linkedin.com/in/mazharul-islam-548a8b260",
       icon: (
         <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
           <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
@@ -172,26 +175,14 @@ const Contact = () => {
       ),
     },
     {
-      name: "Twitter",
-      href: "https://twitter.com/yourusername",
-      icon: (
-        <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-        </svg>
-      ),
+      name: "Facebook",
+      href: "https://www.facebook.com/rifat3569",
+      icon: <Facebook />,
     },
     {
-      name: "Dribbble",
+      name: "WhatsApp",
       href: "https://dribbble.com/yourusername",
-      icon: (
-        <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-          <path
-            fillRule="evenodd"
-            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c5.51 0 10-4.48 10-10S17.51 2 12 2zm6.605 4.61a8.502 8.502 0 011.93 5.314c-.281-.054-3.101-.629-5.943-.271-.065-.141-.12-.293-.184-.445a25.416 25.416 0 00-.564-1.236c3.145-1.28 4.577-3.124 4.761-3.362zM12 3.475c2.17 0 4.154.813 5.662 2.148-.152.216-1.443 1.941-4.48 3.08-1.399-2.57-2.95-4.675-3.189-5A8.687 8.687 0 0112 3.475zm-3.633.803a53.896 53.896 0 013.167 4.935c-3.992 1.063-7.517 1.04-7.896 1.04a8.581 8.581 0 014.729-5.975zM3.453 12.01v-.26c.37.01 4.512.065 8.775-1.215.25.477.477.965.694 1.453-.109.033-.228.065-.336.098-4.404 1.42-6.747 5.303-6.942 5.629a8.522 8.522 0 01-2.19-5.705zM12 20.547a8.482 8.482 0 01-5.239-1.8c.152-.315 1.888-3.656 6.703-5.337.022-.01.033-.01.054-.022a35.318 35.318 0 011.823 6.475 8.4 8.4 0 01-3.341.684zm4.761-1.465c-.086-.52-.542-3.015-1.659-6.084 2.679-.423 5.022.271 5.314.369a8.468 8.468 0 01-3.655 5.715z"
-            clipRule="evenodd"
-          />
-        </svg>
-      ),
+      icon: <FaWhatsapp size={20}></FaWhatsapp>,
     },
   ];
 
@@ -244,12 +235,12 @@ const Contact = () => {
             {/* Contact Cards */}
             <div className="space-y-4">
               {contactInfo.map((info, index) => (
-                <a
+                <Link
                   key={index}
                   href={info.href}
-                  className="group flex items-center gap-4 p-5 rounded-2xl bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 hover:border-purple-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/10"
+                  className="group flex items-center gap-4 p-5 rounded-md bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 hover:border-purple-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/10"
                 >
-                  <div className="w-14 h-14 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 group-hover:bg-purple-500/20 group-hover:scale-110 transition-all duration-300">
+                  <div className="w-14 h-14 rounded-md bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 group-hover:bg-purple-500/20 group-hover:scale-110 transition-all duration-300">
                     {info.icon}
                   </div>
                   <div>
@@ -271,12 +262,12 @@ const Contact = () => {
                       d="M17 8l4 4m0 0l-4 4m4-4H3"
                     />
                   </svg>
-                </a>
+                </Link>
               ))}
             </div>
 
             {/* Social Links */}
-            <div className="p-6 rounded-2xl bg-gray-800/50 backdrop-blur-sm border border-gray-700/50">
+            <div className="p-6 rounded-md bg-gray-800/50 backdrop-blur-sm border border-gray-700/50">
               <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
                 <svg
                   className="w-5 h-5 text-purple-400"
@@ -300,7 +291,7 @@ const Contact = () => {
                     href={social.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-12 h-12 rounded-xl bg-gray-700/50 flex items-center justify-center text-gray-400 hover:bg-purple-500/20 hover:text-purple-400 hover:border-purple-500/50 border border-transparent transition-all duration-300 hover:scale-110 hover:-translate-y-1"
+                    className="w-12 h-12 rounded-md bg-gray-700/50 flex items-center justify-center text-gray-400 hover:bg-purple-500/20 hover:text-purple-400 hover:border-purple-500/50 border border-transparent transition-all duration-300 hover:scale-110 hover:-translate-y-1"
                     aria-label={social.name}
                   >
                     {social.icon}
@@ -310,7 +301,7 @@ const Contact = () => {
             </div>
 
             {/* Map or Image Placeholder */}
-            <div className="relative h-48 rounded-2xl overflow-hidden border border-gray-700/50">
+            <div className="relative h-48 rounded-md overflow-hidden border border-gray-700/50">
               <div className="absolute inset-0 bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
                 <div className="text-center">
                   <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-purple-500/20 flex items-center justify-center">
@@ -355,7 +346,7 @@ const Contact = () => {
 
               {/* Success Message */}
               {isSubmitted && (
-                <div className="mb-8 p-4 rounded-xl bg-green-500/10 border border-green-500/30 flex items-center gap-3 animate-fade-in">
+                <div className="mb-8 p-4 rounded-md bg-green-500/10 border border-green-500/30 flex items-center gap-3 animate-fade-in">
                   <div className="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center flex-shrink-0">
                     <svg
                       className="w-5 h-5 text-green-400"
@@ -422,7 +413,7 @@ const Contact = () => {
                         onFocus={() => setFocusedField("name")}
                         onBlur={() => setFocusedField(null)}
                         placeholder="John Doe"
-                        className={`w-full pl-12 pr-5 py-4 rounded-xl bg-gray-900/50 border-2 text-white placeholder-gray-500 outline-none transition-all duration-300
+                        className={`w-full pl-12 pr-5 py-3 rounded-md bg-gray-900/50 border-2 text-white placeholder-gray-500 outline-none transition-all duration-300
                           ${
                             errors.name
                               ? "border-red-500/50 focus:border-red-500"
@@ -489,7 +480,7 @@ const Contact = () => {
                         onFocus={() => setFocusedField("email")}
                         onBlur={() => setFocusedField(null)}
                         placeholder="john@example.com"
-                        className={`w-full pl-12 pr-5 py-4 rounded-xl bg-gray-900/50 border-2 text-white placeholder-gray-500 outline-none transition-all duration-300
+                        className={`w-full pl-12 pr-5 py-3 rounded-md bg-gray-900/50 border-2 text-white placeholder-gray-500 outline-none transition-all duration-300
                           ${
                             errors.email
                               ? "border-red-500/50 focus:border-red-500"
@@ -557,7 +548,7 @@ const Contact = () => {
                       onFocus={() => setFocusedField("subject")}
                       onBlur={() => setFocusedField(null)}
                       placeholder="Project Inquiry"
-                      className={`w-full pl-12 pr-5 py-4 rounded-xl bg-gray-900/50 border-2 text-white placeholder-gray-500 outline-none transition-all duration-300
+                      className={`w-full pl-12 pr-5 py-3 rounded-md bg-gray-900/50 border-2 text-white placeholder-gray-500 outline-none transition-all duration-300
                         ${
                           errors.subject
                             ? "border-red-500/50 focus:border-red-500"
@@ -624,7 +615,7 @@ const Contact = () => {
                       onBlur={() => setFocusedField(null)}
                       placeholder="Tell me about your project, goals, and timeline..."
                       rows={6}
-                      className={`w-full pl-12 pr-5 py-4 rounded-xl bg-gray-900/50 border-2 text-white placeholder-gray-500 outline-none transition-all duration-300 resize-none
+                      className={`w-full pl-12 pr-5 py-3 rounded-md bg-gray-900/50 border-2 text-white placeholder-gray-500 outline-none transition-all duration-300 resize-none
                         ${
                           errors.message
                             ? "border-red-500/50 focus:border-red-500"
@@ -665,7 +656,7 @@ const Contact = () => {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full relative py-4 px-8 rounded-xl font-semibold text-white overflow-hidden group disabled:cursor-not-allowed"
+                  className="w-full relative py-4 px-8 rounded-md font-semibold text-white overflow-hidden group disabled:cursor-not-allowed"
                 >
                   {/* Button Background */}
                   <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-purple-600 transition-all duration-300 group-hover:from-purple-600 group-hover:to-purple-700" />

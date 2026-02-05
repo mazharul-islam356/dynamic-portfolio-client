@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "../lib/utils";
 import ShinyText from "./shiny-text";
 import ShinyTitle from "@/components/ShinyTitle";
+import Link from "next/link";
 
 export const TeamCarousel = ({
   members,
@@ -49,8 +50,8 @@ export const TeamCarousel = ({
       ? window.innerWidth < 640
         ? 260
         : window.innerWidth < 1024
-        ? 360
-        : cardWidth
+          ? 360
+          : cardWidth
       : cardWidth;
 
   const responsiveHeight =
@@ -58,8 +59,8 @@ export const TeamCarousel = ({
       ? window.innerWidth < 640
         ? 200
         : window.innerWidth < 1024
-        ? 260
-        : cardHeight
+          ? 260
+          : cardHeight
       : cardHeight;
 
   /* ---------------------------- Pagination ---------------------------- */
@@ -72,7 +73,7 @@ export const TeamCarousel = ({
       setCurrentIndex(nextIndex);
       onMemberChange?.(members[nextIndex], nextIndex);
     },
-    [currentIndex, totalMembers]
+    [currentIndex, totalMembers],
   );
 
   const wrapIndex = (index) => (index + totalMembers) % totalMembers;
@@ -86,9 +87,7 @@ export const TeamCarousel = ({
     return "hidden";
   };
 
-  
-
-   /* ------------------------------ MOTION STYLES ----------------------------- */
+  /* ------------------------------ MOTION STYLES ----------------------------- */
   const getVariantStyles = (position) => {
     const transition = {
       duration: animationDuration / 1000,
@@ -161,14 +160,11 @@ export const TeamCarousel = ({
   };
 
   /* -------------------------- Hover Animation (UPDATED) -------------------------- */
-const hoverAnimation = {
-  width: responsiveWidth - 60,
-  height: responsiveHeight + 120,
-  transition: { duration: 0.5 },
-};
-
-
-
+  const hoverAnimation = {
+    width: responsiveWidth - 60,
+    height: responsiveHeight + 120,
+    transition: { duration: 0.5 },
+  };
 
   /* --------------------------- Autoplay --------------------------- */
   useEffect(() => {
@@ -192,13 +188,12 @@ const hoverAnimation = {
     if (Math.abs(diff) > 50) paginate(diff > 0 ? 1 : -1);
   };
 
-  
-const titleSizeClasses = {
-    sm: 'text-2xl',
-    md: 'text-3xl',
-    lg: 'text-4xl',
-    xl: 'text-5xl',
-    '2xl': 'text-5xl',
+  const titleSizeClasses = {
+    sm: "text-2xl",
+    md: "text-3xl",
+    lg: "text-4xl",
+    xl: "text-5xl",
+    "2xl": "text-5xl",
   };
 
   /* ---------------------------- UI ---------------------------- */
@@ -206,7 +201,7 @@ const titleSizeClasses = {
     <div
       className={cn(
         "min-h-screen flex flex-col items-center justify-center overflow-hidden relative",
-        className
+        className,
       )}
       style={{ background }}
       onTouchStart={handleTouchStart}
@@ -214,26 +209,25 @@ const titleSizeClasses = {
       onTouchEnd={handleTouchEnd}
     >
       {title && (
-  <h2
-    className={cn(
-      "font-black hero-font uppercase tracking-tight absolute left-1/2 -translate-x-1/2 whitespace-nowrap z-10",
-      titleSizeClasses[titleSize],
-      titleClassName
-    )}
-    style={{
-      top: "4rem",
-      color: titleColor,
-    }}
-  >
-    <ShinyTitle
-  text={title}
-  disabled={false} 
-  speed={3} 
-  className='custom-class' 
-/>
-   
-  </h2>
-)}
+        <h2
+          className={cn(
+            "font-black hero-font uppercase tracking-tight absolute left-1/2 -translate-x-1/2 whitespace-nowrap z-10",
+            titleSizeClasses[titleSize],
+            titleClassName,
+          )}
+          style={{
+            top: "4rem",
+            color: titleColor,
+          }}
+        >
+          <ShinyTitle
+            text={title}
+            disabled={false}
+            speed={3}
+            className="custom-class"
+          />
+        </h2>
+      )}
 
       <div
         className="w-full max-w-6xl relative"
@@ -271,7 +265,7 @@ const titleSizeClasses = {
                   key={member.id}
                   className={cn(
                     "absolute bg-white overflow-hidden shadow-2xl cursor-pointer carousel-card",
-                    cardClassName
+                    cardClassName,
                   )}
                   style={{
                     width: responsiveWidth,
@@ -287,28 +281,25 @@ const titleSizeClasses = {
                     onCardClick?.(member, index);
                   }}
                 >
-                <motion.img
-  src={member.image}
-  className="w-full h-auto object-cover"
-  style={{
-    position: "absolute",
-    top: 0,
-    left: 0,
-  }}
-  initial={{ y: 0 }}
-  animate={{ y: 0 }}
-  whileHover={
-    isActive
-      ? {
-          y: (responsiveHeight - (responsiveHeight + 1100)), 
-          transition: { duration: 4.5, ease: "easeInOut" },
-        }
-      : {}
-  }
-/>
-
-
-
+                  <motion.img
+                    src={member.image}
+                    className="w-full h-auto object-cover"
+                    style={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                    }}
+                    initial={{ y: 0 }}
+                    animate={{ y: 0 }}
+                    whileHover={
+                      isActive
+                        ? {
+                            y: responsiveHeight - (responsiveHeight + 1100),
+                            transition: { duration: 4.5, ease: "easeInOut" },
+                          }
+                        : {}
+                    }
+                  />
                 </motion.div>
               );
             })}
@@ -316,20 +307,64 @@ const titleSizeClasses = {
         </div>
 
         {/* Overlay Info */}
-                  {infoPosition === "overlay" && (
-                    <div
-                      className="absolute bottom-0 left-0 right-0 p-4 text-center"
-                      style={{
-                        background:
-                          infoBackground ||
-                          "linear-gradient(transparent, rgba(0,0,0,0.8))",
-                        color: infoTextColor,
-                      }}
+        {infoPosition === "bottom" && members[currentIndex] && (
+          <motion.div
+            key={members[currentIndex].id + "-info"}
+            initial={{ opacity: 0, y: 30, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.9 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+            className="mt-12 flex justify-center"
+          >
+            <div className="flex items-center gap-4 bg-white/5 backdrop-blur-lg border border-white/10 rounded-full pl-6 pr-2 py-2">
+              {/* Animated dot */}
+              <span className="relative flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+              </span>
+
+              {/* Project Name */}
+              {members[currentIndex].name && (
+                <h2 className="text-lg font-medium text-white">
+                  {members[currentIndex].name}
+                </h2>
+              )}
+
+              {/* Divider */}
+              <div className="w-px h-6 bg-white/20" />
+
+              {/* Live URL Button */}
+              {members[currentIndex].liveUrl && (
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Link
+                    href={members[currentIndex].liveUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white text-black font-semibold text-sm hover:bg-gray-100 transition-colors"
+                  >
+                    <span>View Project</span>
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
                     >
-                      <h3 className="font-bold text-white">{members.name}</h3>
-                      <p className="opacity-80">{members.role}</p>
-                    </div>
-                  )}
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                      />
+                    </svg>
+                  </Link>
+                </motion.div>
+              )}
+            </div>
+          </motion.div>
+        )}
       </div>
     </div>
   );

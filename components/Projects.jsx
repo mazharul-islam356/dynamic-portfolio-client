@@ -12,6 +12,7 @@ const teamMembers = [
     role: "Founder",
     image: "/gadcheap.png",
     bio: "Visionary leader with 10+ years of experience.",
+    liveUrl: "https://example.com",
   },
   {
     id: "2",
@@ -19,6 +20,7 @@ const teamMembers = [
     role: "Founder",
     image: "/mks.jpg",
     bio: "Visionary leader with 10+ years of experience.",
+    liveUrl: "https://example.com",
   },
   {
     id: "3",
@@ -26,6 +28,7 @@ const teamMembers = [
     role: "Founder",
     image: "/maxcart.png",
     bio: "Visionary leader with 10+ years of experience.",
+    liveUrl: "https://example.com",
   },
   {
     id: "4",
@@ -33,6 +36,7 @@ const teamMembers = [
     role: "Founder",
     image: "/applenewtn.png",
     bio: "Visionary leader with 10+ years of experience.",
+    liveUrl: "https://example.com",
   },
   {
     id: "5",
@@ -40,6 +44,7 @@ const teamMembers = [
     role: "Founder",
     image: "/celtel.png",
     bio: "Visionary leader with 10+ years of experience.",
+    liveUrl: "https://example.com",
   },
   {
     id: "6",
@@ -47,6 +52,7 @@ const teamMembers = [
     role: "Founder",
     image: "/taiba.png",
     bio: "Visionary leader with 10+ years of experience.",
+    liveUrl: "https://example.com",
   },
   {
     id: "7",
@@ -54,6 +60,7 @@ const teamMembers = [
     role: "Founder",
     image: "/bodda.jpg",
     bio: "Visionary leader with 10+ years of experience.",
+    liveUrl: "https://example.com",
   },
 ];
 
