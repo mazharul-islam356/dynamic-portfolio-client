@@ -2,6 +2,9 @@
 "use client";
 
 import React, { useState } from "react";
+import ShinyTitle from "./ShinyTitle";
+import { cn } from "@/lib/utils";
+import Footer from "./Footer";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -69,7 +72,13 @@ const Contact = () => {
       setErrors((prev) => ({ ...prev, [name]: undefined }));
     }
   };
-
+  const titleSizeClasses = {
+    sm: "text-2xl",
+    md: "text-3xl",
+    lg: "text-4xl",
+    xl: "text-5xl",
+    "2xl": "text-5xl",
+  };
   const contactInfo = [
     {
       icon: (
@@ -210,20 +219,23 @@ const Contact = () => {
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <span className="inline-block px-4 py-2 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 text-sm font-medium mb-6">
-            Get In Touch
-          </span>
-          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">
-            Let&apos;s Work{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-purple-600">
-              Together
-            </span>
+          <h2
+            className={cn(
+              "font-black hero-font uppercase tracking-tight text-center  whitespace-nowrap z-10",
+              titleSizeClasses["xl"],
+            )}
+            style={{
+              top: "4rem",
+              color: "white",
+            }}
+          >
+            <ShinyTitle
+              text="Let's work together"
+              disabled={false}
+              speed={3}
+              className="custom-class"
+            />
           </h2>
-          <p className="text-gray-400 max-w-2xl mx-auto text-lg leading-relaxed">
-            Have a project in mind or just want to say hello? Feel free to reach
-            out. I&apos;m always open to discussing new projects, creative
-            ideas, or opportunities to be part of your vision.
-          </p>
         </div>
 
         <div className="grid lg:grid-cols-5 gap-12 items-start">
@@ -295,23 +307,6 @@ const Contact = () => {
                   </a>
                 ))}
               </div>
-            </div>
-
-            {/* Availability Status */}
-            <div className="p-6 rounded-2xl bg-gradient-to-br from-purple-500/10 to-purple-600/10 border border-purple-500/20">
-              <div className="flex items-center gap-3 mb-3">
-                <span className="relative flex h-3 w-3">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
-                </span>
-                <span className="text-green-400 font-medium">
-                  Available for new projects
-                </span>
-              </div>
-              <p className="text-gray-400 text-sm">
-                I&apos;m currently taking on new freelance projects and open to
-                full-time opportunities.
-              </p>
             </div>
 
             {/* Map or Image Placeholder */}
@@ -726,117 +721,11 @@ const Contact = () => {
                   </span>
                 </button>
               </form>
-
-              {/* Form Footer */}
-              <div className="mt-8 pt-6 border-t border-gray-700/50">
-                <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-gray-400">
-                  <div className="flex items-center gap-2">
-                    <svg
-                      className="w-4 h-4 text-purple-400"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                      />
-                    </svg>
-                    Secure & Encrypted
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <svg
-                      className="w-4 h-4 text-purple-400"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                      />
-                    </svg>
-                    24hr Response Time
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <svg
-                      className="w-4 h-4 text-purple-400"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-                      />
-                    </svg>
-                    No Spam Promise
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Bottom CTA Section */}
-        <div className="mt-20">
-          <div className="bg-gradient-to-r from-purple-500/10 via-purple-600/10 to-purple-500/10 rounded-3xl p-8 sm:p-12 border border-purple-500/20 text-center">
-            <h3 className="text-2xl sm:text-3xl font-bold text-white mb-4">
-              Prefer a quick chat?
-            </h3>
-            <p className="text-gray-400 mb-8 max-w-xl mx-auto">
-              If you&apos;d rather schedule a call or video meeting, I&apos;m
-              happy to connect and discuss your project in real-time.
-            </p>
-            <div className="flex flex-wrap justify-center gap-4">
-              <a
-                href="#"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-purple-500 hover:bg-purple-600 text-white font-medium transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/30"
-              >
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                  />
-                </svg>
-                Schedule a Call
-              </a>
-              <a
-                href="#"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gray-700/50 hover:bg-gray-700 text-white font-medium border border-gray-600 hover:border-purple-500/50 transition-all duration-300"
-              >
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
-                  />
-                </svg>
-                Video Meeting
-              </a>
             </div>
           </div>
         </div>
       </div>
+      <Footer />
     </section>
   );
 };

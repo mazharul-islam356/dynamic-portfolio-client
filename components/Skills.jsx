@@ -1,68 +1,92 @@
-"use client";
-
-import { useEffect, useState } from "react";
 import Image from "next/image";
-import axios from "axios";
+
 import Marquee from "react-fast-marquee";
-import Aurora from "./Aurora";
+
+const skills = [
+  {
+    _id: "692db432e3e604c6f9503306",
+    name: "TypeScript",
+    icon: "https://www.outletexpense.xyz/uploads/260-Biplob-Hossen/1770289951_69847b1f2d65a.png",
+  },
+  {
+    _id: "692dbc5ae3e604c6f9503309",
+    name: "React Js",
+    icon: "https://www.outletexpense.xyz/uploads/260-Biplob-Hossen/1770289906_69847af2b7aa7.png",
+  },
+  {
+    _id: "692dbdd5e3e604c6f950330c",
+    name: "Node js",
+    icon: "https://www.outletexpense.xyz/uploads/260-Biplob-Hossen/1770289892_69847ae480af6.png",
+  },
+  {
+    _id: "692dbe3ce3e604c6f9503312",
+    name: "Figma",
+    icon: "https://www.outletexpense.xyz/uploads/260-Biplob-Hossen/1770289875_69847ad3a33e9.png",
+  },
+  {
+    _id: "692dbe85e3e604c6f9503315",
+    name: "JWT",
+    icon: "https://www.outletexpense.xyz/uploads/260-Biplob-Hossen/1770289854_69847abec90d2.png",
+  },
+  {
+    _id: "692dbef5e3e604c6f9503318",
+    name: "Tailwind Css",
+    icon: "https://www.outletexpense.xyz/uploads/260-Biplob-Hossen/1770289838_69847aaeddfd5.png",
+  },
+  {
+    _id: "692dc14ae3e604c6f9503321",
+    name: "Next js",
+    icon: "https://www.outletexpense.xyz/uploads/260-Biplob-Hossen/1770289822_69847a9e17542.png",
+  },
+  {
+    _id: "692dc36be3e604c6f9503324",
+    name: "Firebase",
+    icon: "https://www.outletexpense.xyz/uploads/260-Biplob-Hossen/1770289807_69847a8f8aa77.png",
+  },
+  {
+    _id: "692dc51ae3e604c6f950332b",
+    name: "GitHub",
+    icon: "https://www.outletexpense.xyz/uploads/260-Biplob-Hossen/1770289792_69847a8043d98.png",
+  },
+  {
+    _id: "692dc5b3e3e604c6f950332e",
+    name: "MongoDB",
+    icon: "https://www.outletexpense.xyz/uploads/260-Biplob-Hossen/1770289776_69847a70f35de.png",
+  },
+  {
+    _id: "6932eb2604e40bff9e5a5283",
+    name: "JavaScript",
+    icon: "https://www.outletexpense.xyz/uploads/260-Biplob-Hossen/1770289750_69847a56da460.png",
+  },
+];
 
 const Skills = () => {
-  const [skills, setSkills] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  // const [loading, setLoading] = useState(true);
+  // const [error, setError] = useState(null);
 
-  useEffect(() => {
-    setLoading(true);
-    setError(null);
-    axios
-      .get("http://localhost:5000/api/skills")
-      .then((res) => {
-        setSkills(res.data);
-      })
-      .catch((err) => {
-        console.error("Failed to fetch skills:", err);
-        setError("Failed to load skills. Please try again later.");
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, []);
-
-  const getImageUrl = (skill) => {
-    if (!skill.icon && !skill.iconId) return null;
-
-    if (skill.icon) {
-      if (skill.icon.includes("undefined/api/images/")) {
-        const iconId = skill.icon.split("/api/images/").pop();
-        return `http://localhost:5000/api/images/${iconId}`;
-      }
-      if (skill.icon.startsWith("http")) {
-        return skill.icon;
-      }
-      if (skill.icon.startsWith("/api/images/")) {
-        return `http://localhost:5000/api/${skill.icon}`;
-      }
-      return `http://localhost:5000/api/images/${skill.icon}`;
-    }
-
-    if (skill.iconId) {
-      return `http://localhost:5000/api/images/${skill.iconId}`;
-    }
-    return null;
-  };
+  // useEffect(() => {
+  //   setLoading(true);
+  //   setError(null);
+  //   axios
+  //     .get("http://localhost:5000/api/skills")
+  //     .then((res) => {
+  //       setSkills(res.data);
+  //     })
+  //     .catch((err) => {
+  //       console.error("Failed to fetch skills:", err);
+  //       setError("Failed to load skills. Please try again later.");
+  //     })
+  //     .finally(() => {
+  //       setLoading(false);
+  //     });
+  // }, []);
 
   return (
     <div className="py-10 relative bg-transparent">
-      {loading && <p>Loading...</p>}
-
-      {error && <p>{error}</p>}
-
       {/* ⭐ SKILLS MARQUEE */}
       <Marquee speed={50} className="py-4">
         {skills.map((skill, idx) => {
-          const imgUrl = getImageUrl(skill);
-          if (!imgUrl) return null;
-          console.log(imgUrl);
+          console.log(skill.icon);
           return (
             <div
               key={idx}
@@ -88,7 +112,7 @@ const Skills = () => {
               <Image
                 width={100}
                 height={100}
-                src={imgUrl}
+                src={skill?.icon}
                 alt={skill.name}
                 className="relative w-20 h-20 object-contain rounded-full z-10"
               />

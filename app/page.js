@@ -10,6 +10,7 @@ import Plasma from "@/components/Plasma";
 import FloatingLines from "@/components/FloatingLines";
 import PurpleGlowBackground from "@/components/GlowingBallsBackground";
 import Experience from "@/components/WorkExperience";
+import Footer from "@/components/Footer";
 
 const cardArray = [
   {
@@ -60,7 +61,6 @@ export default function HomePage() {
       <Contact />
       {/* <SeasonalHoverCards cards={cardArray} /> */}
       {/* <WorkExperience /> */}
-      {/* <Footer /> */}
     </main>
   );
 }

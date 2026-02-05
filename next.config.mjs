@@ -2,11 +2,19 @@
 const nextConfig = {
   images: {
     remotePatterns: [
+      // Local backend
       {
         protocol: "http",
         hostname: "localhost",
         port: "5000",
         pathname: "/api/images/**",
+      },
+
+      // Production domain
+      {
+        protocol: "https",
+        hostname: "www.outletexpense.xyz",
+        pathname: "/uploads/**",
       },
     ],
   },
