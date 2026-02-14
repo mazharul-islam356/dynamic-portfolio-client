@@ -112,8 +112,7 @@ const Experience = () => {
         <div className="text-center mb-16">
           <h2
             className={cn(
-              "font-black hero-font uppercase tracking-tight text-center  whitespace-nowrap z-10",
-              titleSizeClasses["xl"],
+              "font-black hero-font uppercase tracking-tight text-center  whitespace-nowrap z-10 md: text-4xl lg:text-4xl xl:text-5xl",
             )}
             style={{
               top: "4rem",

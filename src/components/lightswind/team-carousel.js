@@ -1,9 +1,8 @@
 "use client";
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useMemo } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "../lib/utils";
-import ShinyText from "./shiny-text";
 import ShinyTitle from "@/components/ShinyTitle";
 import Link from "next/link";
 
@@ -17,11 +16,11 @@ export const TeamCarousel = ({
   cardHeight = 300,
   cardRadius = 20,
   showArrows = true,
-  showDots = true,
+  showDots = true, // currently not used but kept for API
   keyboardNavigation = true,
   touchNavigation = true,
   animationDuration = 1000,
-  autoPlay = 0,
+  autoPlay = 0, // ms, 0 = no autoplay
   pauseOnHover = true,
   visibleCards = 2,
   sideCardScale = 0.9,
@@ -41,137 +40,201 @@ export const TeamCarousel = ({
   const [direction, setDirection] = useState(0);
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
 
   const totalMembers = members.length;
 
-  /* -------------------------- Responsive -------------------------- */
-  const responsiveWidth =
-    typeof window !== "undefined"
-      ? window.innerWidth < 640
-        ? 260
-        : window.innerWidth < 1024
-          ? 360
-          : cardWidth
-      : cardWidth;
+  /* -------------------------- Responsive sizing -------------------------- */
+  const [cardSize, setCardSize] = useState({
+    width: cardWidth,
+    height: cardHeight,
+  });
 
-  const responsiveHeight =
-    typeof window !== "undefined"
-      ? window.innerWidth < 640
-        ? 200
-        : window.innerWidth < 1024
-          ? 260
-          : cardHeight
-      : cardHeight;
+  useEffect(() => {
+    const updateSize = () => {
+      if (typeof window === "undefined") return;
+
+      const w = window.innerWidth;
+
+      if (w < 640) {
+        setCardSize({ width: 260, height: 200 });
+      } else if (w < 1024) {
+        setCardSize({ width: 360, height: 260 });
+      } else {
+        setCardSize({ width: cardWidth, height: cardHeight });
+      }
+    };
+
+    updateSize();
+    window.addEventListener("resize", updateSize);
+    return () => window.removeEventListener("resize", updateSize);
+  }, [cardWidth, cardHeight]);
+
+  const responsiveWidth = cardSize.width;
+  const responsiveHeight = cardSize.height;
+
+  /* --------------------------------------------------
+   *  প্রতিটি ইমেজের জন্য স্কেল করা height সেভ করে রাখব
+   * -------------------------------------------------- */
+  // index => scaled image height
+  const [imageHeights, setImageHeights] = useState({});
+
+  // ইমেজ লোড হলে তার natural size নিয়ে কার্ড width অনুযায়ী scale করব
+  const handleImageLoad = (index, e) => {
+    const img = e.currentTarget;
+
+    const naturalWidth = img.naturalWidth;
+    const naturalHeight = img.naturalHeight;
+
+    if (!naturalWidth || !naturalHeight) return;
+
+    // ইমেজকে কার্ড width অনুযায়ী fit করি (object-cover এর মত)
+    const scale = responsiveWidth / naturalWidth;
+    const scaledHeight = naturalHeight * scale;
+
+    // আমরা আসল height-এর থেকেও কিছুটা বাড়িয়ে দিতে চাই (যদি full pan extra smooth চাই)
+    // তবে তোমার চাহিদা অনুযায়ী "পুরো আসল ইমেজ" যেন টপ থেকে বটম পর্যন্ত যায়, তাই অতিরিক্ত scale করলাম না।
+    setImageHeights((prev) => ({
+      ...prev,
+      [index]: scaledHeight,
+    }));
+  };
 
   /* ---------------------------- Pagination ---------------------------- */
   const paginate = useCallback(
     (newDirection) => {
       if (totalMembers === 0) return;
       setDirection(newDirection);
-      const nextIndex =
-        (currentIndex + newDirection + totalMembers) % totalMembers;
-      setCurrentIndex(nextIndex);
-      onMemberChange?.(members[nextIndex], nextIndex);
+      setCurrentIndex((prevIndex) => {
+        const nextIndex =
+          (prevIndex + newDirection + totalMembers) % totalMembers;
+        const nextMember = members[nextIndex];
+        onMemberChange?.(nextMember, nextIndex);
+        return nextIndex;
+      });
     },
-    [currentIndex, totalMembers],
+    [totalMembers, members, onMemberChange],
   );
 
-  const wrapIndex = (index) => (index + totalMembers) % totalMembers;
+  const wrapIndex = useCallback(
+    (index) => (index + totalMembers) % totalMembers,
+    [totalMembers],
+  );
 
-  const calculatePosition = (index) => {
-    const diff = wrapIndex(index - currentIndex);
-    if (diff === 0) return "center";
-    if (diff <= visibleCards) return `right-${diff}`;
-    if (diff >= totalMembers - visibleCards)
-      return `left-${totalMembers - diff}`;
-    return "hidden";
-  };
+  const calculatePosition = useCallback(
+    (index) => {
+      const diff = wrapIndex(index - currentIndex);
+      if (diff === 0) return "center";
+      if (diff <= visibleCards) return `right-${diff}`;
+      if (diff >= totalMembers - visibleCards)
+        return `left-${totalMembers - diff}`;
+      return "hidden";
+    },
+    [currentIndex, totalMembers, visibleCards, wrapIndex],
+  );
 
   /* ------------------------------ MOTION STYLES ----------------------------- */
-  const getVariantStyles = (position) => {
-    const transition = {
-      duration: animationDuration / 1000,
-      ease: [0.25, 0.46, 0.45, 0.94],
-    };
+  const getVariantStyles = useCallback(
+    (position) => {
+      const transition = {
+        duration: animationDuration / 1000,
+        ease: [0.25, 0.46, 0.45, 0.94],
+      };
 
-    const w = responsiveWidth;
-    const h = responsiveHeight;
+      const w = responsiveWidth;
 
-    switch (position) {
-      case "center":
-        return {
-          zIndex: 10,
-          opacity: 1,
-          scale: 1.1,
-          x: 0,
-          filter: "grayscale(0%)",
-          pointerEvents: "auto",
-          transition,
-        };
+      switch (position) {
+        case "center":
+          return {
+            zIndex: 10,
+            opacity: 1,
+            scale: 1.05,
+            x: 0,
+            filter: "grayscale(0%)",
+            pointerEvents: "auto",
+            transition,
+          };
 
-      case "right-1":
-        return {
-          zIndex: 5,
-          opacity: sideCardOpacity,
-          scale: sideCardScale,
-          x: w * 0.7,
-          filter: grayscaleEffect ? "grayscale(100%)" : "grayscale(0%)",
-          pointerEvents: "auto",
-          transition,
-        };
+        case "right-1":
+          return {
+            zIndex: 5,
+            opacity: sideCardOpacity,
+            scale: sideCardScale,
+            x: w * 0.7,
+            filter: grayscaleEffect ? "grayscale(100%)" : "grayscale(0%)",
+            pointerEvents: "auto",
+            transition,
+          };
 
-      case "right-2":
-        return {
-          zIndex: 1,
-          opacity: sideCardOpacity * 0.7,
-          scale: sideCardScale * 0.9,
-          x: w * 1.4,
-          transition,
-        };
+        case "right-2":
+          return {
+            zIndex: 1,
+            opacity: sideCardOpacity * 0.7,
+            scale: sideCardScale * 0.9,
+            x: w * 1.4,
+            filter: grayscaleEffect ? "grayscale(100%)" : "grayscale(0%)",
+            transition,
+          };
 
-      case "left-1":
-        return {
-          zIndex: 5,
-          opacity: sideCardOpacity,
-          scale: sideCardScale,
-          x: -w * 0.7,
-          transition,
-        };
+        case "left-1":
+          return {
+            zIndex: 5,
+            opacity: sideCardOpacity,
+            scale: sideCardScale,
+            x: -w * 0.7,
+            filter: grayscaleEffect ? "grayscale(100%)" : "grayscale(0%)",
+            pointerEvents: "auto",
+            transition,
+          };
 
-      case "left-2":
-        return {
-          zIndex: 1,
-          opacity: sideCardOpacity * 0.7,
-          scale: sideCardScale * 0.9,
-          x: -w * 1.4,
-          transition,
-        };
+        case "left-2":
+          return {
+            zIndex: 1,
+            opacity: sideCardOpacity * 0.7,
+            scale: sideCardScale * 0.9,
+            x: -w * 1.4,
+            filter: grayscaleEffect ? "grayscale(100%)" : "grayscale(0%)",
+            transition,
+          };
 
-      default:
-        return {
-          zIndex: 0,
-          opacity: 0,
-          scale: 0.8,
-          x: direction > 0 ? w * (visibleCards + 1) : -w * (visibleCards + 1),
-          pointerEvents: "none",
-          transition,
-        };
-    }
-  };
+        default:
+          return {
+            zIndex: 0,
+            opacity: 0,
+            scale: 0.8,
+            x: direction > 0 ? w * (visibleCards + 1) : -w * (visibleCards + 1),
+            pointerEvents: "none",
+            transition,
+          };
+      }
+    },
+    [
+      animationDuration,
+      responsiveWidth,
+      direction,
+      visibleCards,
+      sideCardOpacity,
+      sideCardScale,
+      grayscaleEffect,
+    ],
+  );
 
-  /* -------------------------- Hover Animation (UPDATED) -------------------------- */
+  /* -------------------------- Card hover animation (card scale) -------------------------- */
   const hoverAnimation = {
-    width: responsiveWidth - 60,
-    height: responsiveHeight + 120,
-    transition: { duration: 0.5 },
+    scale: 1.03,
+    transition: { duration: 0.35, ease: "easeOut" },
   };
 
   /* --------------------------- Autoplay --------------------------- */
   useEffect(() => {
-    let interval;
-    if (autoPlay > 0) interval = setInterval(() => paginate(1), autoPlay);
+    if (autoPlay <= 0 || totalMembers <= 1 || isHovered) return;
+
+    const interval = setInterval(() => {
+      paginate(1);
+    }, autoPlay);
+
     return () => clearInterval(interval);
-  }, [autoPlay]);
+  }, [autoPlay, totalMembers, paginate, isHovered]);
 
   /* ---------------------------- Touch ---------------------------- */
   const handleTouchStart = (e) => {
@@ -188,12 +251,17 @@ export const TeamCarousel = ({
     if (Math.abs(diff) > 50) paginate(diff > 0 ? 1 : -1);
   };
 
+  /* ---------------------------- Keyboard ---------------------------- */
+  const handleKeyDown = (e) => {
+    if (!keyboardNavigation) return;
+    if (e.key === "ArrowLeft") paginate(-1);
+    if (e.key === "ArrowRight") paginate(1);
+  };
+
   const titleSizeClasses = {
-    sm: "text-2xl",
-    md: "text-3xl",
+    md: "text-2xl",
     lg: "text-4xl",
     xl: "text-5xl",
-    "2xl": "text-5xl",
   };
 
   /* ---------------------------- UI ---------------------------- */
@@ -207,11 +275,15 @@ export const TeamCarousel = ({
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
+      onMouseEnter={pauseOnHover ? () => setIsHovered(true) : undefined}
+      onMouseLeave={pauseOnHover ? () => setIsHovered(false) : undefined}
+      onKeyDown={handleKeyDown}
+      tabIndex={keyboardNavigation ? 0 : -1}
     >
       {title && (
         <h2
           className={cn(
-            "font-black hero-font uppercase tracking-tight absolute left-1/2 -translate-x-1/2 whitespace-nowrap z-10",
+            "font-black hero-font uppercase tracking-tight absolute left-1/2 -translate-x-1/2 whitespace-nowrap z-10 md:text-4xl lg:text-4xl xl:text-5xl",
             titleSizeClasses[titleSize],
             titleClassName,
           )}
@@ -234,7 +306,7 @@ export const TeamCarousel = ({
         style={{ height: responsiveHeight + 120 }}
       >
         {/* Arrows */}
-        {showArrows && (
+        {showArrows && totalMembers > 1 && (
           <>
             <button
               onClick={() => paginate(-1)}
@@ -260,9 +332,19 @@ export const TeamCarousel = ({
               const isActive = index === currentIndex;
               if (position === "hidden" && !isActive) return null;
 
+              // এই ইমেজের জন্য scaled height (লোড হলে সেট হবে)
+              const imgHeight = imageHeights[index];
+
+              // verticalPan নির্ভর করবে imgHeight-এর ওপর
+              // না লোড হওয়া পর্যন্ত 0 রাখছি যাতে jump না হয়
+              const verticalPan =
+                imgHeight && imgHeight > responsiveHeight
+                  ? responsiveHeight - imgHeight // top -> bottom পুরো
+                  : 0; // যদি height না পাওয়া যায় বা ছোট হয়, তাহলে মুভ করবে না
+
               return (
                 <motion.div
-                  key={member.id}
+                  key={member.id ?? index}
                   className={cn(
                     "absolute bg-white overflow-hidden shadow-2xl cursor-pointer carousel-card",
                     cardClassName,
@@ -281,21 +363,28 @@ export const TeamCarousel = ({
                     onCardClick?.(member, index);
                   }}
                 >
+                  {/* ইমেজ: ডিফল্টে টপ অংশ, hover এ top → bottom পুরো ইমেজ */}
                   <motion.img
                     src={member.image}
-                    className="w-full h-auto object-cover"
+                    alt={member.name ?? "Project image"}
+                    className="w-full object-cover"
                     style={{
                       position: "absolute",
                       top: 0,
                       left: 0,
                     }}
-                    initial={{ y: 0 }}
-                    animate={{ y: 0 }}
+                    // ইমেজ লোড হলে আসল size নিয়ে scaledHeight ক্যালকুলেট করছি
+                    onLoad={(e) => handleImageLoad(index, e)}
+                    initial={{ y: 0 }} // সবসময় টপ থেকে শুরু
+                    animate={{ y: 0 }} // নরমাল অবস্থায় টপ
                     whileHover={
-                      isActive
+                      isActive && verticalPan !== 0
                         ? {
-                            y: responsiveHeight - (responsiveHeight + 1100),
-                            transition: { duration: 4.5, ease: "easeInOut" },
+                            y: verticalPan,
+                            transition: {
+                              duration: 4.5,
+                              ease: "easeInOut",
+                            },
                           }
                         : {}
                     }
@@ -343,7 +432,7 @@ export const TeamCarousel = ({
                     href={members[currentIndex].liveUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white text-black font-semibold text-sm hover:bg-gray-100 transition-colors"
+                    className="flex items-center gap-2 px-5 py-2.5 rounded-full bg.white text-black font-semibold text-sm hover:bg-gray-100 transition-colors"
                   >
                     <span>View Project</span>
                     <svg
