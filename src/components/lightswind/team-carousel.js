@@ -432,7 +432,7 @@ export const TeamCarousel = ({
                     href={members[currentIndex].liveUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-5 py-2.5 rounded-full bg.white text-black font-semibold text-sm hover:bg-gray-100 transition-colors"
+                    className="flex items-center gap-2 px-5 py-2.5 rounded-full bg.white text-black font-semibold text-sm bg-gray-100 transition-colors"
                   >
                     <span>View Project</span>
                     <svg
