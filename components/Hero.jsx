@@ -383,7 +383,7 @@ export default function Home() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setDarkVeilReady(true);
-    }, 200);
+    });
     return () => clearTimeout(timer);
   }, []);
 
@@ -411,7 +411,7 @@ export default function Home() {
 
       <canvas
         ref={canvasRef}
-        className="absolute md:top-15 top-10 inset-0 z-10 webgl"
+        className="absolute md:top-14 top-10 inset-0 z-10 webgl"
       />
 
       <div className="absolute md:bottom-10 bottom-20 w-full text-center md:z-30 z-10">

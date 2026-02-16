@@ -1,0 +1,197 @@
+/* styles/loading.css */
+
+.loading-page {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* Background glow effect */
+.loading-page::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px;
+  height: 300px;
+  background: radial-gradient(
+    ellipse,
+    rgba(75, 13, 191, 0.3) 0%,
+    transparent 70%
+  );
+  filter: blur(60px);
+  animation: pulseGlow 3s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+}
+
+#logoE {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  filter: drop-shadow(0 0 10px rgba(75, 13, 191, 0.5));
+}
+
+/* Letter animations with #4b0dbf color */
+#logoE path {
+  fill: transparent;
+  stroke: #4b0dbf;
+  stroke-width: 3;
+}
+
+/* Fill animation after stroke completes */
+#logoE path {
+  animation:
+    line-anim 2s ease forwards,
+    fillIn 0.5s ease forwards 2.5s;
+}
+
+#logoE path:nth-child(1) {
+  stroke-dasharray: 491;
+  stroke-dashoffset: 491;
+  animation:
+    line-anim 2s ease forwards 1.6s,
+    fillIn 0.5s ease forwards 3.6s;
+}
+
+#logoE path:nth-child(2) {
+  stroke-dasharray: 319;
+  stroke-dashoffset: 319;
+  animation:
+    line-anim 2s ease forwards 1.4s,
+    fillIn 0.5s ease forwards 3.4s;
+}
+
+#logoE path:nth-child(3) {
+  stroke-dasharray: 218;
+  stroke-dashoffset: 218;
+  animation:
+    line-anim 2s ease forwards 1.2s,
+    fillIn 0.5s ease forwards 3.2s;
+}
+
+#logoE path:nth-child(4) {
+  stroke-dasharray: 343;
+  stroke-dashoffset: 343;
+  animation:
+    line-anim 2s ease forwards 1s,
+    fillIn 0.5s ease forwards 3s;
+}
+
+#logoE path:nth-child(5) {
+  stroke-dasharray: 221;
+  stroke-dashoffset: 221;
+  animation:
+    line-anim 2s ease forwards 0.8s,
+    fillIn 0.5s ease forwards 2.8s;
+}
+
+#logoE path:nth-child(6) {
+  stroke-dasharray: 218;
+  stroke-dashoffset: 218;
+  animation:
+    line-anim 2s ease forwards 0.6s,
+    fillIn 0.5s ease forwards 2.6s;
+}
+
+#logoE path:nth-child(7) {
+  stroke-dasharray: 327;
+  stroke-dashoffset: 327;
+  animation:
+    line-anim 2s ease forwards 0.4s,
+    fillIn 0.5s ease forwards 2.4s;
+}
+
+#logoE path:nth-child(8) {
+  stroke-dasharray: 234;
+  stroke-dashoffset: 234;
+  animation:
+    line-anim 2s ease forwards 0.3s,
+    fillIn 0.5s ease forwards 2.3s;
+}
+
+#logoE path:nth-child(9) {
+  stroke-dasharray: 319;
+  stroke-dashoffset: 319;
+  animation:
+    line-anim 2s ease forwards 0.2s,
+    fillIn 0.5s ease forwards 2.2s;
+}
+
+#logoE path:nth-child(10) {
+  stroke-dasharray: 374;
+  stroke-dashoffset: 374;
+  animation:
+    line-anim 2s ease forwards 0.1s,
+    fillIn 0.5s ease forwards 2.1s;
+}
+
+#logoE path:nth-child(11) {
+  stroke-dasharray: 343;
+  stroke-dashoffset: 343;
+  animation:
+    line-anim 2s ease forwards 0.05s,
+    fillIn 0.5s ease forwards 2.05s;
+}
+
+#logoE path:nth-child(12) {
+  stroke-dasharray: 319;
+  stroke-dashoffset: 319;
+  animation:
+    line-anim 2s ease forwards 0s,
+    fillIn 0.5s ease forwards 2s;
+}
+
+#logoE path:nth-child(13) {
+  stroke-dasharray: 674;
+  stroke-dashoffset: 674;
+  animation:
+    line-anim 2s ease forwards 0s,
+    fillIn 0.5s ease forwards 2s;
+}
+
+/* Stroke draw animation */
+@keyframes line-anim {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Fill animation after stroke */
+@keyframes fillIn {
+  to {
+    fill: #4b0dbf;
+  }
+}
+
+/* Fade out the entire loading screen */
+.loading-page.fade-out {
+  animation: fadeOutScreen 0.8s ease forwards;
+}
+
+@keyframes fadeOutScreen {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
