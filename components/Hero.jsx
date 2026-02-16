@@ -1,120 +1,86 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import Header from "./Header";
 import GlassButtonDemo from "./GlassButton";
 import DarkVeil from "./DarkVeil";
+import LoadingScreen from "./Loader";
 
 export default function Home() {
   const canvasRef = useRef(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadProgress, setLoadProgress] = useState(0);
+  const [darkVeilReady, setDarkVeilReady] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Use refs to store mutable values
+  const meshesRef = useRef([]);
+  const texturesRef = useRef([]);
+  const animationRef = useRef(null);
+  const rendererRef = useRef(null);
+  const geometryRef = useRef(null);
 
   useEffect(() => {
-    // Image list
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  useEffect(() => {
+    if (!canvasRef.current) return;
+
     const imagePaths = [
-      "/Screenshot 2025-11-29 132501.png",
       "/celtel.png",
       "/mks.png",
+      "/taibamart-home.png",
       "/gadcheap.png",
       "/applenewtn.png",
       "/maxcart.png",
+      "/voterkotha-home.png",
+      "/saki-home.png",
     ];
 
-    // Load textures
-    const textureLoader = new THREE.TextureLoader();
-    const textures = imagePaths.map((url) => textureLoader.load(url));
-
     const canvas = canvasRef.current;
-
-    // Scene
     const scene = new THREE.Scene();
 
-    // ============================
-    // ⭐ RESPONSIVE SETTINGS
-    // ============================
-    let numVisible;
-    let radius;
-    let arcSpread;
-    let planeWidth;
-    let planeHeight;
-    let centerScale;
+    // Responsive settings
+    let numVisible, radius, arcSpread, planeWidth, planeHeight;
 
-    if (window.innerWidth < 768) {
-      // ⭐ MOBILE VERSION
+    if (isMobile) {
       numVisible = 5;
       radius = 2.8;
       arcSpread = 1.0 * Math.PI;
       planeWidth = 1.9;
       planeHeight = 1.05;
-      centerScale = 0.95; // ছোট center image
     } else {
-      // ⭐ DESKTOP VERSION
       numVisible = 8;
       radius = 4.6;
       arcSpread = 1.4 * Math.PI;
       planeWidth = 2.5;
       planeHeight = 1.55;
-      centerScale = 0.85; // ডেস্কটপেও একটু ছোট center
     }
 
-    // Plane geometry
-    const geometry = new THREE.PlaneGeometry(planeWidth, planeHeight, 40, 1);
-
-    // Mesh count
-    const numMeshes = 30;
+    const numMeshes = Math.min(imagePaths.length * 2, 16);
     const centerIndex = Math.floor(numMeshes / 2);
+    const widthSegments = isMobile ? 8 : 20;
 
-    const meshes = [];
+    const geometry = new THREE.PlaneGeometry(
+      planeWidth,
+      planeHeight,
+      widthSegments,
+      1,
+    );
+    geometryRef.current = geometry;
 
-    // Create curved meshes
-    for (let i = 0; i < numMeshes; i++) {
-      const material = new THREE.ShaderMaterial({
-        uniforms: {
-          uTexture: { value: textures[i % textures.length] },
-          uRadius: { value: radius },
-        },
-        vertexShader: `
-          varying vec2 vUv;
-          uniform float uRadius;
-          void main() {
-            vUv = uv;
-            vec3 p = position;
-
-            float theta = p.x / uRadius;
-            float c = cos(theta);
-            float s = sin(theta);
-
-            // Slight gap fix with multiplier
-            vec3 curvedPosition = vec3(
-              (uRadius * s) * 0.985,
-              p.y,
-              uRadius * (1.0 - c)
-            );
-
-            gl_Position = projectionMatrix * modelViewMatrix * vec4(curvedPosition, 1.0);
-          }
-        `,
-        fragmentShader: `
-          varying vec2 vUv;
-          uniform sampler2D uTexture;
-          void main() {
-            gl_FragColor = texture2D(uTexture, vUv);
-          }
-        `,
-      });
-
-      const mesh = new THREE.Mesh(geometry, material);
-      scene.add(mesh);
-      meshes.push(mesh);
-    }
-
-    // Sizes
     const sizes = {
       width: window.innerWidth,
       height: window.innerHeight,
     };
 
-    // Camera
     const camera = new THREE.PerspectiveCamera(
       70,
       sizes.width / sizes.height,
@@ -124,55 +90,56 @@ export default function Home() {
     camera.position.z = 5.5;
     scene.add(camera);
 
-    // Renderer
     const renderer = new THREE.WebGLRenderer({
       canvas,
-      antialias: true,
+      antialias: !isMobile,
       alpha: true,
+      powerPreference: "high-performance",
     });
     renderer.setSize(sizes.width, sizes.height);
-    renderer.setPixelRatio(Math.min(2, window.devicePixelRatio));
+    renderer.setPixelRatio(Math.min(isMobile ? 1 : 2, window.devicePixelRatio));
     renderer.setClearColor(0x000000, 0);
+    rendererRef.current = renderer;
 
-    // Drag Logic
+    // Drag controls
     let mouseDown = false;
     let prevX = 0;
     let targetX = 0;
     let currentX = 0;
-    let ease = 0.075;
+    const ease = 0.075;
 
     const onMouseDown = (e) => {
       mouseDown = true;
       prevX = e.clientX;
     };
-
-    const onMouseUp = () => (mouseDown = false);
-
+    const onMouseUp = () => {
+      mouseDown = false;
+    };
     const onMouseMove = (e) => {
       if (!mouseDown) return;
       targetX -= (e.clientX - prevX) * 0.01;
+      prevX = e.clientX;
     };
-
-    window.addEventListener("mousedown", onMouseDown);
-    window.addEventListener("mouseup", onMouseUp);
-    window.addEventListener("mousemove", onMouseMove);
-
     const onTouchStart = (e) => {
       mouseDown = true;
       prevX = e.touches[0].clientX;
     };
-    const onTouchEnd = () => (mouseDown = false);
+    const onTouchEnd = () => {
+      mouseDown = false;
+    };
     const onTouchMove = (e) => {
       if (!mouseDown) return;
       targetX -= (e.touches[0].clientX - prevX) * 0.01;
       prevX = e.touches[0].clientX;
     };
 
-    window.addEventListener("touchstart", onTouchStart);
-    window.addEventListener("touchend", onTouchEnd);
-    window.addEventListener("touchmove", onTouchMove);
+    window.addEventListener("mousedown", onMouseDown);
+    window.addEventListener("mouseup", onMouseUp);
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchend", onTouchEnd, { passive: true });
+    window.addEventListener("touchmove", onTouchMove, { passive: true });
 
-    // Resize
     const onResize = () => {
       sizes.width = window.innerWidth;
       sizes.height = window.innerHeight;
@@ -180,56 +147,192 @@ export default function Home() {
       camera.updateProjectionMatrix();
       renderer.setSize(sizes.width, sizes.height);
     };
-
     window.addEventListener("resize", onResize);
 
-    // Animation loop
     const wrap = (v, max) => ((v % max) + max) % max;
 
-    const animate = () => {
-      requestAnimationFrame(animate);
+    let isInitialized = false;
+    const textureLoader = new THREE.TextureLoader();
 
-      // ✅ auto move: left -> right
+    const loadTexture = (url, index, total) => {
+      return new Promise((resolve) => {
+        textureLoader.load(
+          url,
+          (tex) => {
+            try {
+              tex.anisotropy = Math.min(
+                4,
+                renderer.capabilities.getMaxAnisotropy(),
+              );
+              tex.minFilter = THREE.LinearFilter;
+              tex.magFilter = THREE.LinearFilter;
+              tex.generateMipmaps = false;
+              setLoadProgress(((index + 1) / total) * 100);
+              resolve(tex);
+            } catch (err) {
+              console.error(`Error processing texture ${url}:`, err);
+              resolve(null);
+            }
+          },
+          undefined,
+          (err) => {
+            console.error(`Failed to load ${url}:`, err);
+            resolve(null);
+          },
+        );
+      });
+    };
+
+    const initMeshes = (validTextures) => {
+      if (!validTextures || validTextures.length === 0) {
+        console.error("No valid textures");
+        return false;
+      }
+
+      meshesRef.current = [];
+
+      for (let i = 0; i < numMeshes; i++) {
+        const material = new THREE.ShaderMaterial({
+          uniforms: {
+            uTexture: { value: validTextures[i % validTextures.length] },
+            uRadius: { value: radius },
+            uOpacity: { value: 0 },
+          },
+          vertexShader: `
+            varying vec2 vUv;
+            uniform float uRadius;
+            void main() {
+              vUv = uv;
+              vec3 p = position;
+              float theta = p.x / uRadius;
+              float c = cos(theta);
+              float s = sin(theta);
+              vec3 curvedPosition = vec3(
+                (uRadius * s) * 0.985,
+                p.y,
+                uRadius * (1.0 - c)
+              );
+              gl_Position = projectionMatrix * modelViewMatrix * vec4(curvedPosition, 1.0);
+            }
+          `,
+          fragmentShader: `
+            varying vec2 vUv;
+            uniform sampler2D uTexture;
+            uniform float uOpacity;
+            void main() {
+              vec4 tex = texture2D(uTexture, vUv);
+              gl_FragColor = vec4(tex.rgb, tex.a * uOpacity);
+            }
+          `,
+          transparent: true,
+        });
+
+        const mesh = new THREE.Mesh(geometry, material);
+        scene.add(mesh);
+        meshesRef.current.push(mesh);
+      }
+
+      // Fade in animation using for loop
+      for (let i = 0; i < meshesRef.current.length; i++) {
+        const mesh = meshesRef.current[i];
+        if (!mesh || !mesh.material || !mesh.material.uniforms) continue;
+
+        ((m, delay) => {
+          setTimeout(() => {
+            const fadeIn = () => {
+              if (
+                m &&
+                m.material &&
+                m.material.uniforms &&
+                m.material.uniforms.uOpacity &&
+                m.material.uniforms.uOpacity.value < 1
+              ) {
+                m.material.uniforms.uOpacity.value += 0.05;
+                requestAnimationFrame(fadeIn);
+              }
+            };
+            fadeIn();
+          }, delay);
+        })(mesh, i * 50);
+      }
+
+      return true;
+    };
+
+    const animate = () => {
+      animationRef.current = requestAnimationFrame(animate);
+
+      if (!isInitialized) return;
+
+      const meshes = meshesRef.current;
+      if (!meshes || meshes.length === 0) return;
+
       if (!mouseDown) {
         targetX -= 0.005;
       }
 
-      // smooth easing
       currentX += (targetX - currentX) * ease;
 
-      for (let i = 0; i < numMeshes; i++) {
+      for (let i = 0; i < meshes.length; i++) {
         const mesh = meshes[i];
+        if (!mesh) continue;
 
-        /**
-         * ✅ Infinite loop offset:
-         * raw grows/shrinks forever, but we wrap it so items always stay around center.
-         */
         const raw = i - currentX;
-        const w = wrap(raw + centerIndex, numMeshes) - centerIndex; // range around center
-
+        const w = wrap(raw + centerIndex, numMeshes) - centerIndex;
         const angle = w * (arcSpread / (numVisible - 1));
 
-        // Only show within visible range
         mesh.visible = Math.abs(w) <= numVisible / 2;
         if (!mesh.visible) continue;
 
-        // curved positions
         mesh.position.x = radius * Math.sin(angle);
         mesh.position.z = radius * (1 - Math.cos(angle));
-
-        // ✅ no center scaling (all same)
         mesh.scale.set(1, 1, 1);
-
         mesh.lookAt(camera.position.x, 0, camera.position.z);
       }
 
       renderer.render(scene, camera);
     };
 
-    animate();
+    const init = async () => {
+      try {
+        const loadedTextures = [];
 
-    // Cleanup
+        for (let i = 0; i < imagePaths.length; i++) {
+          const tex = await loadTexture(imagePaths[i], i, imagePaths.length);
+          if (tex) {
+            loadedTextures.push(tex);
+          }
+        }
+
+        texturesRef.current = loadedTextures;
+
+        if (loadedTextures.length > 0) {
+          isInitialized = initMeshes(loadedTextures);
+          if (isInitialized) {
+            animate();
+          }
+        }
+
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 500);
+      } catch (e) {
+        console.error("Failed to initialize:", e);
+        setIsLoading(false);
+      }
+    };
+
+    init();
+
+    // Cleanup function
     return () => {
+      // Cancel animation
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+        animationRef.current = null;
+      }
+
+      // Remove event listeners
       window.removeEventListener("mousedown", onMouseDown);
       window.removeEventListener("mouseup", onMouseUp);
       window.removeEventListener("mousemove", onMouseMove);
@@ -238,14 +341,56 @@ export default function Home() {
       window.removeEventListener("touchmove", onTouchMove);
       window.removeEventListener("resize", onResize);
 
-      renderer.dispose();
-      geometry.dispose();
-      meshes.forEach((m) => m.material.dispose());
+      // Dispose renderer
+      if (rendererRef.current) {
+        rendererRef.current.dispose();
+        rendererRef.current = null;
+      }
+
+      // Dispose geometry
+      if (geometryRef.current) {
+        geometryRef.current.dispose();
+        geometryRef.current = null;
+      }
+
+      // Dispose meshes using for loop
+      const meshes = meshesRef.current;
+      if (meshes && meshes.length > 0) {
+        for (let i = 0; i < meshes.length; i++) {
+          const m = meshes[i];
+          if (m && m.material && typeof m.material.dispose === "function") {
+            m.material.dispose();
+          }
+        }
+      }
+      meshesRef.current = [];
+
+      // Dispose textures using for loop
+      const textures = texturesRef.current;
+      if (textures && textures.length > 0) {
+        for (let i = 0; i < textures.length; i++) {
+          const t = textures[i];
+          if (t && typeof t.dispose === "function") {
+            t.dispose();
+          }
+        }
+      }
+      texturesRef.current = [];
     };
+  }, [isMobile]);
+
+  // Delay DarkVeil
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDarkVeilReady(true);
+    }, 200);
+    return () => clearTimeout(timer);
   }, []);
 
   return (
     <div className="w-full h-[90vh] overflow-hidden relative">
+      {isLoading && <LoadingScreen progress={loadProgress} />}
+
       <div className="absolute top-0 left-0 w-full z-30">
         <Header />
       </div>
@@ -253,14 +398,16 @@ export default function Home() {
       <div className="absolute md:top-36 top-40 w-full text-center md:z-30 z-10">
         <h2 className="borel md:text-base text-sm text-white">Hello There —</h2>
         <h2 className="text-white xl:text-4xl lg:text-3xl md:text-2xl text-xl font-bold tracking-wide bruno">
-          You’ve Entered a Creative Dimension
+          You've Entered a Creative Dimension
         </h2>
         <GlassButtonDemo />
       </div>
 
-      <div className="absolute inset-0 z-0 pointer-events-none">
-        <DarkVeil scanlineFrequency={1} scanlineIntensity={0.15} />
-      </div>
+      {darkVeilReady && (
+        <div className="absolute inset-0 z-0 pointer-events-none">
+          <DarkVeil scanlineFrequency={5} scanlineIntensity={0.2} />
+        </div>
+      )}
 
       <canvas
         ref={canvasRef}

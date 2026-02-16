@@ -109,7 +109,7 @@ const Experience = () => {
 
       <div className="max-w-6xl mx-auto relative z-10">
         {/* Section Header */}
-        <div className="text-center mb-16">
+        <div className="text-center md:mb-16 mb-10">
           <h2
             className={cn(
               "font-black hero-font uppercase tracking-tight text-center  whitespace-nowrap z-10 md: text-4xl lg:text-4xl xl:text-5xl",
@@ -137,7 +137,7 @@ const Experience = () => {
                 <button
                   key={exp.id}
                   onClick={() => setActiveTab(index)}
-                  className={`w-full text-left p-6 rounded-2xl transition-all duration-300 group
+                  className={`w-full text-left p-6 rounded-md transition-all duration-300 group
                     ${
                       activeTab === index
                         ? "bg-purple-500/20 border-2 border-purple-500/50 shadow-lg shadow-purple-500/20"
@@ -147,7 +147,7 @@ const Experience = () => {
                   <div className="flex items-center gap-4">
                     {/* Company Logo */}
                     <div
-                      className={`w-14 h-14 rounded-xl flex items-center justify-center text-lg font-bold transition-all duration-300
+                      className={`w-14 h-14 rounded-md flex items-center justify-center text-lg font-bold transition-all duration-300
                       ${
                         activeTab === index
                           ? "bg-gradient-to-br from-purple-400 to-purple-600 text-white"
@@ -175,7 +175,7 @@ const Experience = () => {
               ))}
 
               {/* Download Resume Button */}
-              <button className="w-full mt-6 p-4 rounded-xl bg-gradient-to-r from-purple-500/20 to-purple-600/20 border border-purple-500/30 text-purple-400 font-medium hover:from-purple-500/30 hover:to-purple-600/30 transition-all duration-300 flex items-center justify-center gap-2 group">
+              <button className="w-full mt-6 p-4 rounded-md bg-gradient-to-r from-purple-500/20 to-purple-600/20 border border-purple-500/30 text-purple-400 font-medium hover:from-purple-500/30 hover:to-purple-600/30 transition-all duration-300 flex items-center justify-center gap-2 group">
                 <svg
                   className="w-5 h-5 group-hover:animate-bounce"
                   fill="none"
@@ -205,7 +205,7 @@ const Experience = () => {
                     : "opacity-0 translate-y-4 hidden"
                 }`}
               >
-                <div className="bg-gray-800/50 backdrop-blur-sm rounded-3xl p-8 border border-gray-700/50 shadow-xl">
+                <div className="bg-gray-800/50 backdrop-blur-sm rounded-md p-8 border border-gray-700/50 shadow-xl">
                   {/* Header */}
                   <div className="flex flex-wrap items-start justify-between gap-4 mb-6">
                     <div>
@@ -348,7 +348,7 @@ const Experience = () => {
         </div>
 
         {/* Stats Section */}
-        <div className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div className="mt-7 md:mt-0 grid grid-cols-2 md:grid-cols-4 gap-6">
           {[
             { number: "2+", label: "Years Experience" },
             { number: "35+", label: "Projects Completed" },
@@ -357,7 +357,7 @@ const Experience = () => {
           ].map((stat, index) => (
             <div
               key={index}
-              className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 text-center border border-gray-700/50 hover:border-purple-500/30 transition-all duration-300 group hover:shadow-lg hover:shadow-purple-500/10"
+              className="bg-gray-800/50 backdrop-blur-sm rounded-md p-6 text-center border border-gray-700/50 hover:border-purple-500/30 transition-all duration-300 group hover:shadow-lg hover:shadow-purple-500/10"
             >
               <h3 className="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-purple-600 mb-2 group-hover:scale-110 transition-transform duration-300">
                 {stat.number}

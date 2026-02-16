@@ -209,11 +209,10 @@ const Contact = () => {
 
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Section Header */}
-        <div className="text-center mb-16">
+        <div className="text-center md:mb-16 mb-10">
           <h2
             className={cn(
-              "font-black hero-font uppercase tracking-tight text-center  whitespace-nowrap z-10",
-              titleSizeClasses["xl"],
+              "font-black hero-font uppercase tracking-tight text-center  whitespace-nowrap z-10 md: text-4xl lg:text-4xl xl:text-5xl",
             )}
             style={{
               top: "4rem",
@@ -333,7 +332,7 @@ const Contact = () => {
 
           {/* Contact Form - Right Side */}
           <div className="lg:col-span-3">
-            <div className="bg-gray-800/50 backdrop-blur-sm rounded-3xl p-8 sm:p-10 border border-gray-700/50 shadow-2xl">
+            <div className="bg-gray-800/50 backdrop-blur-sm rounded-md p-8 sm:p-10 border border-gray-700/50 shadow-2xl">
               <div className="mb-8">
                 <h3 className="text-2xl font-bold text-white mb-2">
                   Send me a message
@@ -412,7 +411,7 @@ const Contact = () => {
                         onChange={handleChange}
                         onFocus={() => setFocusedField("name")}
                         onBlur={() => setFocusedField(null)}
-                        placeholder="John Doe"
+                        placeholder="Enter your name"
                         className={`w-full pl-12 pr-5 py-3 rounded-md bg-gray-900/50 border-2 text-white placeholder-gray-500 outline-none transition-all duration-300
                           ${
                             errors.name
@@ -479,7 +478,7 @@ const Contact = () => {
                         onChange={handleChange}
                         onFocus={() => setFocusedField("email")}
                         onBlur={() => setFocusedField(null)}
-                        placeholder="john@example.com"
+                        placeholder="example@gmaiil.com"
                         className={`w-full pl-12 pr-5 py-3 rounded-md bg-gray-900/50 border-2 text-white placeholder-gray-500 outline-none transition-all duration-300
                           ${
                             errors.email

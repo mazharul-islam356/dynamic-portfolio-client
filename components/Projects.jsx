@@ -65,49 +65,28 @@ const teamMembers = [
 ];
 
 const ProjectsSection = () => {
-  const [projects, setProjects] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  // const cardVariants = {
+  //   hidden: { opacity: 0, y: 50 },
+  //   visible: {
+  //     opacity: 1,
+  //     y: 0,
+  //     transition: { duration: 0.6, ease: "easeOut" },
+  //   },
+  // };
 
-  useEffect(() => {
-    setLoading(true);
-    setError(null);
-    axios
-      .get("/projects")
-      .then((res) => {
-        setProjects(res.data);
-      })
-      .catch((err) => {
-        console.error("Failed to fetch projects:", err);
-        setError("Failed to load projects. Please try again later.");
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, []);
-
-  const cardVariants = {
-    hidden: { opacity: 0, y: 50 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.6, ease: "easeOut" },
-    },
-  };
-
-  const contentVariants = {
-    rest: { y: 0, transition: { duration: 0.2, ease: "easeOut" } },
-    hover: { y: -5, transition: { duration: 0.2, ease: "easeOut" } },
-  };
+  // const contentVariants = {
+  //   rest: { y: 0, transition: { duration: 0.2, ease: "easeOut" } },
+  //   hover: { y: -5, transition: { duration: 0.2, ease: "easeOut" } },
+  // };
 
   return (
-    <section className="bg-transparent text-white pb-20 px-4">
+    <section className="bg-transparent text-white md:pb-20 pb-5 px-4">
       {/* <h1 className="text-white text-4xl">My Showcase</h1> */}
       <TeamCarousel
         members={teamMembers}
         title="Project Showcase"
         background="black"
-        // autoPlay={10000}
+        autoPlay={10000}
         onMemberChange={(member, index) => {
           console.log("Active member:", member.name);
         }}

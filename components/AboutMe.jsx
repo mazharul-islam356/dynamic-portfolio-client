@@ -4,7 +4,7 @@ import ParticleCard, { MagicBento } from "./MagicBento";
 
 export default function AboutMe() {
   return (
-    <div className="min-h-screen bg-black text-white relative">
+    <div className="min-h-[80vh] bg-black text-white relative">
       <div className="max-w-7xl mx-auto">
         {/* Animated background orbs */}
         <div className="absolute top-0 left-10 w-72 h-72 bg-purple-500/20 rounded-full blur-[100px] animate-pulse" />

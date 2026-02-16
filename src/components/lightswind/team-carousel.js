@@ -268,7 +268,7 @@ export const TeamCarousel = ({
   return (
     <div
       className={cn(
-        "min-h-screen flex flex-col items-center justify-center overflow-hidden relative",
+        "md:min-h-screen min-h-[75vh] flex flex-col items-center justify-center overflow-hidden relative",
         className,
       )}
       style={{ background }}
@@ -283,8 +283,8 @@ export const TeamCarousel = ({
       {title && (
         <h2
           className={cn(
-            "font-black hero-font uppercase tracking-tight absolute left-1/2 -translate-x-1/2 whitespace-nowrap z-10 md:text-4xl lg:text-4xl xl:text-5xl",
-            titleSizeClasses[titleSize],
+            "font-black hero-font uppercase tracking-tight absolute left-1/2 -translate-x-1/2 whitespace-nowrap z-10 md: text-4xl lg:text-4xl xl:text-5xl",
+
             titleClassName,
           )}
           style={{
@@ -403,7 +403,7 @@ export const TeamCarousel = ({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -20, scale: 0.9 }}
             transition={{ duration: 0.4, ease: "easeOut" }}
-            className="mt-12 flex justify-center"
+            className="md:mt-12 flex justify-center"
           >
             <div className="flex items-center gap-4 bg-white/5 backdrop-blur-lg border border-white/10 rounded-full pl-6 pr-2 py-2">
               {/* Animated dot */}

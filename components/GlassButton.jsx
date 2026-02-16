@@ -18,18 +18,21 @@ export default function GlassButtonDemo() {
       {/* GRID BACKGROUND */}
       <svg className="absolute inset-0 w-full h-full z-0">
         <defs>
-          <pattern id="dottedGrid" width="30" height="30" patternUnits="userSpaceOnUse">
+          <pattern
+            id="dottedGrid"
+            width="30"
+            height="30"
+            patternUnits="userSpaceOnUse"
+          >
             <circle cx="2" cy="2" r="1" fill="rgba(0,0,0,0.15)" />
           </pattern>
         </defs>
         <rect width="100%" height="100%" fill="url(#dottedGrid)" />
       </svg>
 
-      <div className="flex gap-10 items-center z-10">
+      <div className="flex gap-10 items-center">
         {/* BUTTON WRAP */}
         <div className="relative">
-         
-
           {/* MAIN BUTTON */}
           <button
             className="relative select-none md:px-10 px-7 py-1.5 md:py-2 rounded-full cursor-pointer backdrop-blur-sm bg-white/10 shadow-[inset_0_2px_4px_rgba(0,0,0,0.05),inset_0_-2px_4px_rgba(255,255,255,0.5),0_4px_2px_-2px_rgba(0,0,0,0.2)] transition-transform duration-300"
@@ -39,7 +42,7 @@ export default function GlassButtonDemo() {
             <span
               className="absolute inset-0 rounded-full pointer-events-none"
               style={{
-                background: `linear-gradient(135deg, ${rgba()}, transparent)`
+                background: `linear-gradient(135deg, ${rgba()}, transparent)`,
               }}
             />
             <span className="relative font-medium text-gray-100 tracking-tight md:text-base text-sm drop-shadow-sm poppins">
@@ -49,7 +52,6 @@ export default function GlassButtonDemo() {
         </div>
 
         {/* CONTROLS */}
-        
       </div>
     </div>
   );
