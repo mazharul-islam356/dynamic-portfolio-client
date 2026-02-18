@@ -365,6 +365,7 @@ export const TeamCarousel = ({
                 >
                   {/* ইমেজ: ডিফল্টে টপ অংশ, hover এ top → bottom পুরো ইমেজ */}
                   <motion.img
+                    loading="lazy"
                     src={member.image}
                     alt={member.name ?? "Project image"}
                     className="w-full object-cover"

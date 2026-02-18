@@ -1,20 +1,15 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import * as THREE from "three";
-import Header from "./Header";
-import GlassButtonDemo from "./GlassButton";
-import DarkVeil from "./DarkVeil";
-import LoadingScreen from "./Loader";
 
-export default function Home() {
-  const canvasRef = useRef(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [loadProgress, setLoadProgress] = useState(0);
-  const [darkVeilReady, setDarkVeilReady] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-
-  // Use refs to store mutable values
+export const useCarouselScene = ({
+  canvasRef,
+  imagePaths,
+  isMobile,
+  onProgress,
+  onLoaded,
+}) => {
   const meshesRef = useRef([]);
   const texturesRef = useRef([]);
   const animationRef = useRef(null);
@@ -22,32 +17,9 @@ export default function Home() {
   const geometryRef = useRef(null);
 
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
-
-  useEffect(() => {
     if (!canvasRef.current) return;
 
-    const imagePaths = [
-      "/celtel.png",
-      "/mks.png",
-      "/taibamart-home.png",
-      "/gadcheap.png",
-      "/applenewtn.png",
-      "/maxcart.png",
-      "/voterkotha-home.png",
-      "/saki-home.png",
-    ];
-
-    const canvas = canvasRef.current;
-    const scene = new THREE.Scene();
-
-    // Responsive settings
+    // ----- Responsive parameters -----
     let numVisible, radius, arcSpread, planeWidth, planeHeight;
 
     if (isMobile) {
@@ -68,13 +40,9 @@ export default function Home() {
     const centerIndex = Math.floor(numMeshes / 2);
     const widthSegments = isMobile ? 8 : 20;
 
-    const geometry = new THREE.PlaneGeometry(
-      planeWidth,
-      planeHeight,
-      widthSegments,
-      1,
-    );
-    geometryRef.current = geometry;
+    // ----- Scene / Camera / Renderer -----
+    const canvas = canvasRef.current;
+    const scene = new THREE.Scene();
 
     const sizes = {
       width: window.innerWidth,
@@ -96,42 +64,58 @@ export default function Home() {
       alpha: true,
       powerPreference: "high-performance",
     });
+
     renderer.setSize(sizes.width, sizes.height);
     renderer.setPixelRatio(Math.min(isMobile ? 1 : 2, window.devicePixelRatio));
     renderer.setClearColor(0x000000, 0);
+
     rendererRef.current = renderer;
 
-    // Drag controls
+    const geometry = new THREE.PlaneGeometry(
+      planeWidth,
+      planeHeight,
+      widthSegments,
+      1,
+    );
+    geometryRef.current = geometry;
+
+    // ----- Drag / control state -----
     let mouseDown = false;
     let prevX = 0;
     let targetX = 0;
     let currentX = 0;
     const ease = 0.075;
 
-    const onMouseDown = (e) => {
+    const onPointerDown = (clientX) => {
       mouseDown = true;
-      prevX = e.clientX;
+      prevX = clientX;
     };
-    const onMouseUp = () => {
+
+    const onPointerMove = (clientX) => {
+      if (!mouseDown) return;
+      targetX -= (clientX - prevX) * 0.01;
+      prevX = clientX;
+    };
+
+    const onPointerUp = () => {
       mouseDown = false;
     };
-    const onMouseMove = (e) => {
-      if (!mouseDown) return;
-      targetX -= (e.clientX - prevX) * 0.01;
-      prevX = e.clientX;
-    };
+
+    const onMouseDown = (e) => onPointerDown(e.clientX);
+    const onMouseMove = (e) => onPointerMove(e.clientX);
+    const onMouseUp = () => onPointerUp();
+
     const onTouchStart = (e) => {
-      mouseDown = true;
-      prevX = e.touches[0].clientX;
+      if (!e.touches[0]) return;
+      onPointerDown(e.touches[0].clientX);
     };
-    const onTouchEnd = () => {
-      mouseDown = false;
-    };
+
     const onTouchMove = (e) => {
-      if (!mouseDown) return;
-      targetX -= (e.touches[0].clientX - prevX) * 0.01;
-      prevX = e.touches[0].clientX;
+      if (!e.touches[0]) return;
+      onPointerMove(e.touches[0].clientX);
     };
+
+    const onTouchEnd = () => onPointerUp();
 
     window.addEventListener("mousedown", onMouseDown);
     window.addEventListener("mouseup", onMouseUp);
@@ -147,12 +131,13 @@ export default function Home() {
       camera.updateProjectionMatrix();
       renderer.setSize(sizes.width, sizes.height);
     };
+
     window.addEventListener("resize", onResize);
 
     const wrap = (v, max) => ((v % max) + max) % max;
 
-    let isInitialized = false;
     const textureLoader = new THREE.TextureLoader();
+    let isInitialized = false;
 
     const loadTexture = (url, index, total) => {
       return new Promise((resolve) => {
@@ -167,7 +152,11 @@ export default function Home() {
               tex.minFilter = THREE.LinearFilter;
               tex.magFilter = THREE.LinearFilter;
               tex.generateMipmaps = false;
-              setLoadProgress(((index + 1) / total) * 100);
+
+              if (onProgress) {
+                onProgress(((index + 1) / total) * 100);
+              }
+
               resolve(tex);
             } catch (err) {
               console.error(`Error processing texture ${url}:`, err);
@@ -232,36 +221,28 @@ export default function Home() {
         meshesRef.current.push(mesh);
       }
 
-      // Fade in animation using for loop
-      for (let i = 0; i < meshesRef.current.length; i++) {
-        const mesh = meshesRef.current[i];
-        if (!mesh || !mesh.material || !mesh.material.uniforms) continue;
+      meshesRef.current.forEach((mesh, i) => {
+        const delay = i * 50;
 
-        ((m, delay) => {
-          setTimeout(() => {
-            const fadeIn = () => {
-              if (
-                m &&
-                m.material &&
-                m.material.uniforms &&
-                m.material.uniforms.uOpacity &&
-                m.material.uniforms.uOpacity.value < 1
-              ) {
-                m.material.uniforms.uOpacity.value += 0.05;
-                requestAnimationFrame(fadeIn);
-              }
-            };
-            fadeIn();
-          }, delay);
-        })(mesh, i * 50);
-      }
+        setTimeout(() => {
+          const fadeIn = () => {
+            const mat = mesh.material;
+
+            if (mat?.uniforms?.uOpacity && mat.uniforms.uOpacity.value < 1) {
+              mat.uniforms.uOpacity.value += 0.05;
+              requestAnimationFrame(fadeIn);
+            }
+          };
+
+          fadeIn();
+        }, delay);
+      });
 
       return true;
     };
 
     const animate = () => {
       animationRef.current = requestAnimationFrame(animate);
-
       if (!isInitialized) return;
 
       const meshes = meshesRef.current;
@@ -299,40 +280,33 @@ export default function Home() {
 
         for (let i = 0; i < imagePaths.length; i++) {
           const tex = await loadTexture(imagePaths[i], i, imagePaths.length);
-          if (tex) {
-            loadedTextures.push(tex);
-          }
+          if (tex) loadedTextures.push(tex);
         }
 
         texturesRef.current = loadedTextures;
 
         if (loadedTextures.length > 0) {
           isInitialized = initMeshes(loadedTextures);
-          if (isInitialized) {
-            animate();
-          }
+          if (isInitialized) animate();
         }
 
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 500);
+        if (onLoaded) {
+          setTimeout(onLoaded, 300);
+        }
       } catch (e) {
         console.error("Failed to initialize:", e);
-        setIsLoading(false);
+        if (onLoaded) onLoaded();
       }
     };
 
     init();
 
-    // Cleanup function
     return () => {
-      // Cancel animation
-      if (animationRef.current) {
+      if (animationRef.current !== null) {
         cancelAnimationFrame(animationRef.current);
         animationRef.current = null;
       }
 
-      // Remove event listeners
       window.removeEventListener("mousedown", onMouseDown);
       window.removeEventListener("mouseup", onMouseUp);
       window.removeEventListener("mousemove", onMouseMove);
@@ -341,86 +315,26 @@ export default function Home() {
       window.removeEventListener("touchmove", onTouchMove);
       window.removeEventListener("resize", onResize);
 
-      // Dispose renderer
       if (rendererRef.current) {
         rendererRef.current.dispose();
         rendererRef.current = null;
       }
 
-      // Dispose geometry
       if (geometryRef.current) {
         geometryRef.current.dispose();
         geometryRef.current = null;
       }
 
-      // Dispose meshes using for loop
-      const meshes = meshesRef.current;
-      if (meshes && meshes.length > 0) {
-        for (let i = 0; i < meshes.length; i++) {
-          const m = meshes[i];
-          if (m && m.material && typeof m.material.dispose === "function") {
-            m.material.dispose();
-          }
+      meshesRef.current.forEach((m) => {
+        if (m.material && m.material.dispose) {
+          m.material.dispose();
         }
-      }
+      });
+
       meshesRef.current = [];
 
-      // Dispose textures using for loop
-      const textures = texturesRef.current;
-      if (textures && textures.length > 0) {
-        for (let i = 0; i < textures.length; i++) {
-          const t = textures[i];
-          if (t && typeof t.dispose === "function") {
-            t.dispose();
-          }
-        }
-      }
+      texturesRef.current.forEach((t) => t.dispose());
       texturesRef.current = [];
     };
-  }, [isMobile]);
-
-  // Delay DarkVeil
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDarkVeilReady(true);
-    });
-    return () => clearTimeout(timer);
-  }, []);
-
-  return (
-    <div className="w-full h-[90vh] overflow-hidden relative">
-      {isLoading && <LoadingScreen progress={loadProgress} />}
-
-      <div className="absolute top-0 left-0 w-full z-30">
-        <Header />
-      </div>
-
-      <div className="absolute md:top-36 top-40 w-full text-center md:z-30 z-10">
-        <h2 className="borel md:text-base text-sm text-white">Hello There —</h2>
-        <h2 className="text-white xl:text-4xl lg:text-3xl md:text-2xl text-xl font-bold tracking-wide bruno">
-          You've Entered a Creative Dimension
-        </h2>
-        <GlassButtonDemo />
-      </div>
-
-      {darkVeilReady && (
-        <div className="absolute inset-0 z-0 pointer-events-none">
-          <DarkVeil scanlineFrequency={5} scanlineIntensity={0.2} />
-        </div>
-      )}
-
-      <canvas
-        ref={canvasRef}
-        className="absolute md:top-14 top-10 inset-0 z-10 webgl"
-      />
-
-      <div className="absolute md:bottom-10 bottom-20 w-full text-center md:z-30 z-10">
-        <h2 className="text-white md:text-3xl text-2xl opacity-90 dm-serif">
-          Introducing myself — I am{" "}
-          <span className="autowide md:text-lg text-base">Mazharul Islam</span>
-          <br /> Frontend Developer
-        </h2>
-      </div>
-    </div>
-  );
-}
+  }, [canvasRef, imagePaths, isMobile, onProgress, onLoaded]);
+};

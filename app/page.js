@@ -1,6 +1,6 @@
 "use client";
 import Projects from "@/components/Projects";
-import Hero from "@/components/Hero";
+import Hero from "@/components/Hero/Hero";
 import MyService from "@/components/MyService";
 import { SeasonalHoverCards } from "@/src/components/lightswind/seasonal-hover-cards";
 import Skills from "@/components/Skills";
@@ -52,7 +52,7 @@ export default function HomePage() {
         <div className="relative z-20">
           <AboutMe />
           <Skills />
-          <Projects />
+          {/* <Projects /> */}
           <Experience />
         </div>
       </section>
